@@ -1,0 +1,97 @@
+/* Dashboard.css */
+
+.homepage-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background-color:white; /* Tailwind gray-100 */
+}
+  
+.homepage-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;     /* Batas lebar maksimum */
+  width: 100%;           /* Gunakan 100% dari layar hingga max-width */
+  margin: 0 auto;        /* Pusatkan horizontal */
+  padding: 1.5rem;       /* Jaga jarak dalam konten */
+  box-sizing: border-box;
+}
+
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.donasipage-button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 110px;
+  height: 50px;
+  margin: 10px auto;
+  margin-left: 80%;
+  font-weight: bold;
+  border-radius: 7px;
+  box-shadow:  0 0.1rem 1rem 0 #D0CECE;
+  cursor: pointer;
+}
+
+.donation-box{
+  border-radius: 10px;
+  padding-left: 30px;
+  height: 375px;
+  box-shadow:  0 0.1rem 1rem 0 #D0CECE;
+}
+
+.article-box{
+  border-radius: 10px;
+  padding-left: 30px;
+  height: 240px;
+  box-shadow:  0 0.1rem 1rem 0 #D0CECE;
+}
+    
+  /* w
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+      animation: App-logo-spin infinite 20s linear;
+    }
+  }
+  
+  .App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .App-link {
+    color: #61dafb;
+  }
+  
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  } */
+  

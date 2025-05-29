@@ -1,0 +1,101 @@
+.login-container{
+    display: flex;
+    align-items: center; /* Pusat secara vertikal */
+    justify-content: center; /* Pusat secara horizontal */
+    min-height: 100vh;
+    background: linear-gradient(180deg, white, #74FFFF); /* Background gradasi */
+}
+  
+.wrapperLogin{
+    width: fit-content;
+    padding: 30px;
+    background-color: white;
+    border-radius: 25px;
+    text-align: center;
+    align-items: center;
+}
+  
+.login-title{
+    margin: 5px;
+}
+  
+.Logintext{
+    text-align: left;
+}
+  
+.greyText-signup{
+    font-size: 12px;
+    margin-left: 5px;
+}
+.greyText-signup:hover{
+    color: #FF9D00;
+    cursor: pointer;
+}
+.askTxt{
+    color: #7b7b7b;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    margin-top: 5%;
+    flex-direction: row;
+    font-size: 12px;
+}
+  
+.inputLogin{
+    width: 421px;
+    height: 38px;
+    border-radius: 25px;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+    border-style: none;
+    padding-left: 30px;
+    outline: 0;
+}
+  
+.inputPassword{
+    width: 421px;
+    height: 38px;
+    border-radius: 25px;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+    border-style: none;
+    padding-left: 30px;
+    outline: 0;
+}
+  
+.greyText{
+    width: 21%;
+    display: block;
+    font-size: 12px;
+    color: #7a7777;
+    text-decoration: none;
+    text-align: center;
+}
+  
+.greyText{
+    text-align: left;
+    margin-top: 1rem;
+    margin-right: 78%;
+}
+  
+.greyText:hover{
+    color: #FF9D00;
+    cursor: pointer;
+}
+  
+.login-button{
+    border-radius: 25px;
+    width: 184px;
+    height: 41px;
+    margin-top: 50px;
+    background-color: white;
+    font-weight: 600;
+    border-style: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+  
+.error-message {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+}

@@ -1,0 +1,41 @@
+.chooserole-container{
+    display: flex;
+    align-items: center; /* Pusat secara vertikal */
+    justify-content: center; /* Pusat secara horizontal */
+    height: 100vh;
+    background: linear-gradient(180deg, white, #74FFFF); /* Background gradasi */
+}
+
+.chooserole-wrapper{
+    width: 20%;
+    height: 300px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 25px;
+    text-align: center;
+    align-items: center;
+}
+
+.chooserole-form{
+    display: block;
+    text-decoration: none;
+    text-align: center;
+}
+
+.chooserole-title{
+    margin: 5px;
+    margin-bottom: 15%;
+}
+.chooserole-button{
+    width: 70%;
+    height: 50px;
+    margin: 10px auto;
+    text-align: center;
+    align-items: center;
+    font-weight: bold;
+    border-radius: 10px;
+    border-style: none;
+    background-color: white;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+    cursor: pointer;
+}
