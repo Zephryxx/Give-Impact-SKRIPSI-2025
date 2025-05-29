@@ -1,0 +1,30 @@
+.donationpage-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    background-color:white; /* Tailwind gray-100 */
+}
+
+.kategori-button {
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: #e0e0e0;
+    border: none;
+    cursor: pointer;
+  
+}
+
+.kategori-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+  
+.donasi-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 20px 40px;
+}

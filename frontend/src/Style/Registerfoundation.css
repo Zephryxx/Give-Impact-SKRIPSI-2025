@@ -1,0 +1,54 @@
+.registerpage{
+    display: flex;
+    align-items: center; /* Pusat secara vertikal */
+    justify-content: center; /* Pusat secara horizontal */
+    min-height: 100vh; /* Tinggi viewport penuh */
+    background: linear-gradient(180deg, white, #74FFFF); /* Background gradasi */
+}
+
+.wrapperRegister{
+    width: 462px;
+    background-color: white;
+    border-radius: 25px;
+    align-items: center;
+    text-align: center;
+    padding: 30px 30px 18px 25px;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+}
+
+.registrasi-form{
+    text-align: left;
+}
+
+.regis-title{
+    font-size: 28px;
+}
+.registext{
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.input-register{
+    width: 421px;
+    height: 38px;
+    border-radius: 25px;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+    border-style: none;
+    padding-left: 30px;
+}
+
+
+.button-register{
+    align-items: center;
+    border-radius: 25px;
+    width: 184px;
+    height: 41px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    background-color:white;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+    font-weight: bold;
+    border-style: none;
+    cursor: pointer;
+}

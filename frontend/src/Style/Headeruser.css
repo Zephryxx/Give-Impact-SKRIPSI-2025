@@ -1,0 +1,28 @@
+.navbar {
+    background-color: #74FFFF; /* Tailwind gray-300 */
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+  
+.navbar-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+  
+.navbar-buttons {
+    margin-left: 1.5rem;
+}
+
+.donasi-button {
+    cursor: pointer;
+}
+.profile-icon {
+    width: 2rem;
+    height: 2rem;
+    background-color: white;
+    border-radius: 9999px;
+}
+
