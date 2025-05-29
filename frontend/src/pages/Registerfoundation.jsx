@@ -1,5 +1,5 @@
 import React from 'react'
-import '../Style/Registerfoundation.css'
+import '../styles/Registerfoundation.css'
 import { useNavigate } from 'react-router-dom';
 
 function Registerfoundation() {

@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
-import '../Style/Paymentpage.css'
-import Headeruser from '../Components/Headeruser';
+import '../styles/Paymentpage.css'
+import Headeruser from '../components/Headeruser';
 
 const Paymentpage = () => {
   const [selectedAmount, setSelectedAmount] = useState('');

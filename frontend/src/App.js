@@ -1,14 +1,14 @@
 import logo from './logo.svg';
 import './App.css';
 import {BrowserRouter as  Router, Routes, Route } from 'react-router-dom'
-import Chooserole from './Pages/Chooserole';
-import Registerdonatur from './Pages/Registerdonatur';
-import Registerfoundation from './Pages/Registerfoundation';
-import Loginpage from './Pages/Loginpage';
-import Homepage from './Pages/Homepage';
-import Donationpage from './Pages/Donationpage';
-import DonationDetail from './Pages/Donationdetail';
-import Paymentpage from './Pages/Paymentpage';
+import Chooserole from './pages/Chooserole';
+import Registerdonatur from './pages/Registerdonatur';
+import Registerfoundation from './pages/Registerfoundation';
+import Loginpage from './pages/Loginpage';
+import Homepage from './pages/Homepage';
+import Donationpage from './pages/Donationpage';
+import DonationDetail from './pages/Donationdetail';
+import Paymentpage from './pages/Paymentpage';
 function App() {
   return (
     <Router>

@@ -1,9 +1,9 @@
 import React from "react"
-import Headeruser from "../Components/Headeruser";
-import ArticleCard from "../Components/Articlecard";
-import DonationCard from "../Components/Donationcard";
+import Headeruser from "../components/Headeruser";
+import ArticleCard from "../components/Articlecard";
+import DonationCard from "../components/Donationcard";
 import { useNavigate } from 'react-router-dom';
-import "../Style/Homepage.css";
+import "../styles/Homepage.css";
 
 function Homepage (){
 

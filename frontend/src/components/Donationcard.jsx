@@ -1,5 +1,5 @@
 import React from 'react'
-import '../Style/Donationcard.css'
+import '../styles/Donationcard.css'
 import { useNavigate } from 'react-router-dom';
 
 const DonationCard = ({ donationTitle, donors, daysLeft, currentAmount, targetAmount }) => {

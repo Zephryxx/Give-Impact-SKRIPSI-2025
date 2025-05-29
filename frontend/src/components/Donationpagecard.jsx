@@ -1,5 +1,5 @@
 import React from "react";
-import "../Style/Donationpagecard.css"
+import "../styles/Donationpagecard.css"
 const DonasiCard = ({currentAmount, targetAmount}) => {
   const percentage = Math.min((currentAmount / targetAmount) * 100, 100);
 

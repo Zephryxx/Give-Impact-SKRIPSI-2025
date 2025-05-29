@@ -1,5 +1,5 @@
 import React from "react";
-import "../Style/Articlecard.css"
+import "../styles/Articlecard.css"
 const ArticleCard = ({articleTitle}) => {
   return(
     <div className="article-card">

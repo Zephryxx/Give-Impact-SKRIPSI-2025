@@ -1,5 +1,5 @@
 import React from "react";
-import '../Style/Headeruser.css';
+import '../styles/Headeruser.css';
 import { useNavigate } from 'react-router-dom';
 
 

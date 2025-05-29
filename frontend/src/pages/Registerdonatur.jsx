@@ -1,5 +1,5 @@
   import React from 'react'
-  import '../Style/Registerdonatur.css'
+  import '../styles/Registerdonatur.css'
   import { useNavigate } from 'react-router-dom';
   function Registerdonatur() {
       const navigate = useNavigate();

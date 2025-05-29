@@ -1,6 +1,6 @@
 import React from 'react';
-import '../Style/Donationdetail.css';
-import Headeruser from '../Components/Headeruser';
+import '../styles/Donationdetail.css';
+import Headeruser from '../components/Headeruser';
 import { useNavigate } from 'react-router-dom';
 
 const DonationDetail = () => {

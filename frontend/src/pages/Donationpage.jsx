@@ -1,8 +1,8 @@
 import React from "react";
-import "../Style/Donationpage.css";
-import Donationpagecard from "../Components/Donationpagecard";
+import "../styles/Donationpage.css";
+import Donationpagecard from "../components/Donationpagecard";
 import { useNavigate } from 'react-router-dom';
-import Headeruser from "../Components/Headeruser";
+import Headeruser from "../components/Headeruser";
 const kategori = ['Kesehatan', 'Bencana Alam', 'Darurat', 'Pendidikan', 'Bantuan Sosial'];
 
 const KategoriButton = ({ text }) => {
