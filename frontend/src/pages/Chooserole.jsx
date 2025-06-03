@@ -11,8 +11,8 @@ function Chooserole() {
 
           <form className='chooserole-form'>
             <h1 className="chooserole-title">Choose Role</h1>
-            <button className='chooserole-button'type='submit' onClick={() => navigate('/registerdonatur')}>Donatur</button>
-            <button className='chooserole-button' type='submit' onClick={() => navigate('/registerfoundation')}>Foundation</button>
+            <button className='chooserole-button'type='submit' onClick={() => navigate('/register/donatur')}>Donatur</button>
+            <button className='chooserole-button' type='submit' onClick={() => navigate('/register/foundation')}>Foundation</button>
           </form>
 
         </div>
