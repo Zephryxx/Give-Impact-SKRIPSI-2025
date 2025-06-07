@@ -1,34 +1,14 @@
 .donation-page {
     background-color: #f3f4f6;
     min-height: 100vh;
-    font-family: sans-serif;
-}
-
-.header {
-    background-color: #d1d5db;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo,
-.nav-title {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.profile-circle {
-    width: 54px;
-    height: 54px;
-    background-color: white;
-    border-radius: 50%;
+    
 }
 
 .main-content {
     padding: 1rem;
     max-width: 800px;
     margin: auto;
+    /* margin-left: 550px; */
 }
 
 .card {

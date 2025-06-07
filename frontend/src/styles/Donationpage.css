@@ -28,3 +28,8 @@
     gap: 20px;
     padding: 0 20px 40px;
 }
+
+.kategori-button.active {
+  background-color: #4CAF50;
+  color: white;
+}

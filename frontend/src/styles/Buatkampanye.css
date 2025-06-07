@@ -1,0 +1,69 @@
+.donation-form-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+}
+
+.form-title {
+    margin-left: 50px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.donation-form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 600px;
+    margin-left: 50px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    padding: 3px;
+}
+
+.label-buatkampanye {
+    font-weight: 600;
+}
+
+.input-buatkampanye {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.date-group {
+    display: flex;
+    flex-direction: row;
+}
+
+.input-date-buatkampanye{
+    margin: 10px;
+}
+
+.submit-button {
+    margin-top: 30px;
+    background-color: #555;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #333;
+}

@@ -1,6 +1,6 @@
 import React from "react";
 import "../styles/Donationpagecard.css"
-const DonasiCard = ({currentAmount, targetAmount}) => {
+const DonasipageCard = ({currentAmount, targetAmount, campaign }) => {
   const percentage = Math.min((currentAmount / targetAmount) * 100, 100);
 
     return (
@@ -8,7 +8,8 @@ const DonasiCard = ({currentAmount, targetAmount}) => {
         <div className="donasipage-content">
           <div className="donasipage-image"></div>
           <div>
-            <h4>Judul Donasi</h4>
+            <h3>{campaign.title}</h3>
+            <p>Kategori: {campaign.category}</p>            
             <p>Nama Yayasan</p>
           </div>
         </div>
@@ -26,4 +27,4 @@ const DonasiCard = ({currentAmount, targetAmount}) => {
     );
   };
 
-export default DonasiCard;
+export default DonasipageCard;

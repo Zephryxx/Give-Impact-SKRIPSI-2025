@@ -24,5 +24,49 @@
     height: 2rem;
     background-color: white;
     border-radius: 9999px;
+    margin-right: 50px;
 }
+
+.dropdown-menu-profile {
+    position: relative;
+    width: 250px;
+    top: 30px;
+    right: 230px;
+    padding: 0.1rem;
+    background-color: hsl(231, 41%, 97%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1;
+}
+  
+.dropdown-menu-profile ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+}
+  
+.dropdown-menu-profile li {
+    padding: 8px 0;
+    text-align: center;
+}
+  
+.dropdown-menu-profile li button {
+    background: none;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-menu-profile li button:hover{
+    color: #16a7a7;
+}
+
+
+  
+
 

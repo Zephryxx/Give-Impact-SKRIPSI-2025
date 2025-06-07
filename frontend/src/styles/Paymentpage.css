@@ -3,29 +3,6 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    font-family: sans-serif;
-}
-  
-  /* Header */
-.payment-header {
-    background-color: #d1d5db;
-    padding: 0.5rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-  
-.payment-logo,
-.payment-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-  
-.payment-avatar {
-    width: 24px;
-    height: 24px;
-    background-color: white;
-    border-radius: 50%;
 }
   
   /* Main */

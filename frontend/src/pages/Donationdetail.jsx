@@ -4,7 +4,6 @@ import Headeruser from '../components/Headeruser';
 import { useNavigate } from 'react-router-dom';
 
 const DonationDetail = () => {
-
   const navigate = useNavigate();
 
   return (
@@ -13,7 +12,7 @@ const DonationDetail = () => {
       <Headeruser/>
 
       {/* Main Content */}
-      <main className="main-content">
+      <div className="main-content">
         <div className="card">
           <div className="image-placeholder" />
 
@@ -58,7 +57,7 @@ const DonationDetail = () => {
         <div className="button-container" onClick={() => navigate('/payment')}>
           <button className="donate-button">Donasi Sekarang</button>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

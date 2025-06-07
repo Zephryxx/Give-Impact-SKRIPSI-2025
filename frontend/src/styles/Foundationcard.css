@@ -1,0 +1,62 @@
+.foundation-card {
+    border-radius: 0.75rem;
+    background-color: white;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 20rem;
+    cursor: pointer;
+}
+
+.foundationcard-image {
+    height: 6rem;
+    background-color: #d1d5db;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+} 
+
+.foundationcard-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.yayasan-name {
+    font-size: 0.875rem; /* text-sm */
+    color: #4b5563; /* gray-600 */
+}
+  
+.foundationcard-label {
+    font-size: 0.75rem; /* text-xs */
+    color: #6b7280; /* gray-500 */
+}
+  
+.foundationcard-amount {
+    font-size: 0.875rem;
+    color: #3b82f6; /* blue-500 */
+}
+
+.progress-bar {
+    height: 0.25rem;
+    background-color: #d1d5db;
+    border-radius: 9999px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+  
+.progress-fill {
+    width: 50%;
+    height: 100%;
+    background-color: #3b82f6; /* Tailwind blue-500 */
+}
+
+.foundationcard-donor-info {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+  
+.foundationcard-days-left {
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-align: right;
+}

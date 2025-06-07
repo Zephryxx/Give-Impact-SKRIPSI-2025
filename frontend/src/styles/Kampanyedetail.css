@@ -1,0 +1,87 @@
+.kampanyedetail-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+}
+
+
+.kampanyedetail-content {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.kampanyedetail-image {
+  width: 100%;
+  height: 240px;
+  background-color: #ccc;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.kampanyedetail-title {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.kampanyedetail-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.info-subtext {
+  color: #555;
+  font-weight: normal;
+}
+
+.progress-bar {
+  height: 4px;
+  background-color: #ddd;
+  border-radius: 4px;
+  margin: 12px 0 6px;
+}
+
+.progress-fill {
+  width: 25%;
+  height: 100%;
+  background-color: #007bff;
+  border-radius: 4px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.donation-section {
+  margin-bottom: 24px;
+}
+
+.donation-section label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.kampanyedetail-input{
+  width: 97.5%;
+  height: 100px;
+  resize: none;
+  padding: 8px;
+  margin: auto;
+  font-size: 14px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
