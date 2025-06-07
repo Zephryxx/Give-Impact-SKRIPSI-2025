@@ -1,5 +1,5 @@
 import React,{useState, useContext} from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import '../styles/Loginpage.css';
 import { AuthContext } from '../context/AuthContext';
 
@@ -39,7 +39,15 @@ function Loginpage() {
             } else {
                 login(data.user, data.token);
                 setErrorMsg('');
-                navigate('/home');
+                const userType = data.user.tipe_akun;
+
+                if (userType === 'Foundation') {
+                    navigate('/home/foundation'); 
+                } else if (userType === 'Donatur') {
+                    navigate('/home');
+                } else {
+                    console.warn("Unknown user type, redirecting to generic home.");
+                }
             }
     } catch (err) {
         console.error('Login API request failed:', err);
@@ -77,7 +85,7 @@ function Loginpage() {
                         required
                     />
 
-                    <a className="greyText" to="/forgot-password">Forgot Password?</a>
+                    <Link className="greyText" to="/forgot-password">Forgot Password?</Link>
 
                     {errorMsg && <p className="error-message">{errorMsg}</p>}
 
@@ -88,7 +96,7 @@ function Loginpage() {
 
                 <div className='askTxt'>
                     Don't have an account yet?
-                    <a to="/" className='greyText-signup'> Sign Up</a> 
+                    <Link to="/" className='greyText-signup'> Sign Up</Link> 
                 </div>
             </div>
         </div>

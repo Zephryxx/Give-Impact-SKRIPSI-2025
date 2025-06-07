@@ -1,63 +1,118 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState, useContext} from "react";
 import '../styles/Headeruser.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
-let useClickOutside = (handler) =>{
-    let domNode = useRef();
-
-useEffect(() =>{
-    let maybeHandler = (event) => {
-        if(!domNode.current.contains(event.target)){
-            handler();
+function useOutsideAlerter(ref, callback) {
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (ref.current && !ref.current.contains(event.target)) {
+                callback();
+            }
         }
-    };
-
-    document.addEventListener("mousedown", maybeHandler);
-
-    return () =>{
-        document.removeEventListener("mousedown", maybeHandler);
-    }
-})
-    return domNode
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [ref, callback]);
 }
 
 function Headeruser() {
     const navigate = useNavigate();
-    const [isOpen, setIsOpen] = useState(false);
+    const { authState, logout } = useContext(AuthContext);
+    const { isAuthenticated, user } = authState;
 
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
+    const [isDropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useOutsideAlerter(dropdownRef, () => setDropdownOpen(false));
+
+    const handleLogout = () => {
+        logout();
+        setDropdownOpen(false);
+        navigate('/login');
     };
 
-    let domNode = useClickOutside(() =>{
-        setIsOpen(false);
-    })
-    
-    return(
+    const handleEditProfile = () => {
+        if (user?.tipe_akun === 'Foundation') {
+            navigate('/profile/foundation');
+        } else if (user?.tipe_akun === 'Donatur') {
+            navigate('/profile/donatur');
+        } else {
+            navigate('/');
+        }
+        setDropdownOpen(false);
+    };
+
+    const handleTitleClick = () => {
+        if (isAuthenticated) {
+            if (user?.tipe_akun === 'Foundation') {
+                navigate('/home/foundation'); 
+            } else if (user?.tipe_akun === 'Donatur') {
+                navigate('/home'); 
+            } else {
+                navigate('/home'); 
+            }
+        } else {
+            navigate('/home');
+        }
+    };
+
+    const toggleDropdown = () => {
+        setDropdownOpen(!isDropdownOpen);
+    };
+
+    return (
         <div className="navbar">
-            <div className="navbar-title" onClick={() => navigate('/home')}>Give Impact</div>
+            
+            <div className="navbar-title" onClick={handleTitleClick}>Give Impact</div>
             <div className="navbar-buttons">
-                <a className='donasi-button'>Donatur</a>
+                {isAuthenticated && (
+                    <>
+                        {user?.tipe_akun === 'Donatur' && (
+                             <span className="user type">Donatur</span>
+                        )}
+                        {user?.tipe_akun === 'Foundation' && (
+                            <span className="user type">Foundation</span>
+                        )}
+                    </>
+                )}
             </div>
-            <div className="profile-icon" onClick={toggleDropdown} ref={domNode}>
-                <img src="" alt="" />
-                {isOpen && (
-                    <div className="dropdown-menu-profile">
-                        <ul>
-                            <li>
-                                <button className='info-akun-btn' onClick={() => navigate('/profiledonatur')}>
-                                Info Akun
-                                </button>
-                            </li>
-                            <li>
-                                <button className="logOut-btn" onClick={() => navigate('/login')}>Log Out</button>
-                            </li>
-                        </ul>
+            <div className="profile-icon">
+                {isAuthenticated ? (
+                    <div className="profile-icon-wrapper" ref={dropdownRef}>
+                        <div className="profile-icon" onClick={toggleDropdown}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                            </svg>
+                        </div>
+
+                        {isDropdownOpen && (
+                            <div className="dropdown-menu-profile">
+                                <ul>
+                                    <li>
+                                        <button className='dropdown-button info-akun-btn' onClick={handleEditProfile}>
+                                            Info Akun
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button className="dropdown-button logOut-btn" onClick={handleLogout}>
+                                            Log Out
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        )}
                     </div>
+                ) : (
+                    <button className="login-button-navbar" onClick={() => navigate('/login')}>
+                        Login
+                    </button>
                 )}
             </div>
         </div>
-    )
+    );
 }
 
 export default Headeruser;

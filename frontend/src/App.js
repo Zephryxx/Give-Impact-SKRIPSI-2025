@@ -34,6 +34,14 @@ function App() {
           <Route path='/donationpage' element={<Donationpage/>}></Route>
           <Route path='/donationdetail' element={<DonationDetail/>}></Route>
           <Route 
+            path='/home/foundation' 
+            element={
+              <ProtectedRoute>
+                <Homepagefoundation />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
             path='/payment' 
             element={
               <ProtectedRoute>
@@ -41,12 +49,46 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          <Route path='/profiledonatur' element={<Profiledonatur/>}></Route>
-          <Route path='/profilefoundation' element={<Profilefoundation/>}></Route>
-          <Route path='/homefoundation' element={<Homepagefoundation/>}></Route>
-          <Route path='/buatkampanye' element={<Buatkampanye/>}></Route>
-          <Route path='/donationcheck' element={<Donationcheck/>}></Route>
-          <Route path='/kampanyedetail' element={<Kampanyedetail/>}></Route>
+          <Route
+            path='/profile/donatur'
+            element={
+              <ProtectedRoute>
+                <Profiledonatur/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/profile/foundation'
+            element={
+              <ProtectedRoute>
+                <Profilefoundation/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/buatkampanye'
+            element={
+              <ProtectedRoute>
+                <Buatkampanye/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/donationcheck'
+            element={
+              <ProtectedRoute>
+                <Donationcheck/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/kampanyedetail'
+            element={
+              <ProtectedRoute>
+                <Kampanyedetail/>
+              </ProtectedRoute>
+            }
+          />
 
         </Routes>
       </Router>

@@ -1,6 +1,6 @@
   import React, { useState } from 'react';
   import '../styles/Registerdonatur.css'
-  import { useNavigate } from 'react-router-dom';
+  import { useNavigate, Link } from 'react-router-dom';
   
   function Registerdonatur() {
       const navigate = useNavigate();
@@ -139,6 +139,11 @@
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         aria-label="Confirm Password"
                     />
+
+                    <div className='askTxt'>
+                        Already have an account?
+                        <Link to="/login" className='greyText-signup'> Log in</Link> 
+                    </div>
                     
                     {error && <p className="error-message">{error}</p>}
                     {successMessage && <p className="success-message">{successMessage}</p>}
