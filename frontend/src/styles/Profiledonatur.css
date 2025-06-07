@@ -49,7 +49,7 @@
     flex: 1;
 }
 
-.right-field {
+.right-field-donatur {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -121,27 +121,38 @@
 }
 
 /* Tetapkan lebar tetap agar kolom tetap sejajar antar baris */
-.amount {
+.transaction-amount {
     width: 120px;
 }
 
-.kampanye-title {
+.transaction-kampanye-title {
     width: 240px;
     font-weight: bold;
 }
 
-.yayasan {
+.transaction-yayasan {
     width: 240px;
     color: #555;
     font-size: 0.95rem;
 }
 
-.status {
+.transaction-status {
     width: 150px;
     font-weight: bold;
 }
+.status-diterima{
+    color: green;
+}
 
-.date {
+.status-pending{
+    color:#DAC800;
+}
+
+.status-tidak-diterima{
+    color: red;
+
+}
+.transaction-date {
     width: 120px;
 }
 

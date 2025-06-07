@@ -21,7 +21,7 @@ function Profiledonatur() {
         amount: 'Rp. 500.000',
         title: 'Pendidikan Untuk Semua',
         foundation: 'Yayasan Pendidikan',
-        status: 'TIDAK DITERIMA',
+        status: 'INVALID',
         date: '2025-05-15',
         },
     ];
@@ -29,7 +29,7 @@ function Profiledonatur() {
     const statusColor = {
         DITERIMA: 'status-diterima',
         PENDING: 'status-pending',
-        'TIDAK DITERIMA': 'status-tidak-diterima',
+        'INVALID': 'status-tidak-diterima',
     };
 
     /* Pop Up Edit*/
@@ -190,11 +190,11 @@ function Profiledonatur() {
             <div className="transaction-box">
                 {transactions.map((tx, index) => (
                     <div key={index} className="transaction-row">
-                        <div className="column amount">{tx.amount}</div>
-                        <div className="column kampanye-title">{tx.title}</div>
-                        <div className="column yayasan">{tx.foundation}</div>
-                        <div className={`column status ${statusColor[tx.status]}`}>{tx.status}</div>
-                        <div className="column date">{tx.date}</div>
+                        <div className="column transaction-amount">{tx.amount}</div>
+                        <div className="column transaction-kampanye-title">{tx.title}</div>
+                        <div className="column transaction-yayasan">{tx.foundation}</div>
+                        <div className={`column transaction-status ${statusColor[tx.status]}`}>{tx.status}</div>
+                        <div className="column transaction- date">{tx.date}</div>
                     </div>
                 ))}
             </div>

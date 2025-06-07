@@ -40,7 +40,7 @@ function Headeruser() {
                 <a className='donasi-button'>Donatur</a>
             </div>
             <div className="profile-icon" onClick={toggleDropdown} ref={domNode}>
-
+                <img src="" alt="" />
                 {isOpen && (
                     <div className="dropdown-menu-profile">
                         <ul>
