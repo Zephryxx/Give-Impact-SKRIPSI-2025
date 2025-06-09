@@ -7,7 +7,7 @@ const Foundationcard = ({ donationTitle, donors, daysLeft, currentAmount, target
     const navigate = useNavigate();
 
     return (
-        <div className="foundation-card" onClick={() => navigate('/donationdetail')}>
+        <div className="foundation-card" onClick={() => navigate('/donationcheck')}>
             <div className="foundationcard-image" />
             <div className="foundationcard-title">{donationTitle}</div>
             <div className="foundationcard-name">Nama Yayasan</div>

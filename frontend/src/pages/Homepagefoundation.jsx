@@ -15,6 +15,7 @@ function Homepagefoundation() {
             <div className="buatkampanye-button" onClick={() => navigate('/buatkampanye')}>
             Buat Kampanye
             </div>
+            <h3 className="homefoundation-title">Kampanye yang berlangsung</h3>
 
             <div className="card-container">
               <Foundationcard donors="100" daysLeft="100" donationTitle="Bantuan Gempa" currentAmount={5000000} targetAmount={10000000} />

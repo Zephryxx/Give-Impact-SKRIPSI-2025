@@ -78,7 +78,7 @@ function Headeruser() {
                     </>
                 )}
             </div>
-            <div className="profile-icon">
+            <div className="profile-icon-box">
                 {isAuthenticated ? (
                     <div className="profile-icon-wrapper" ref={dropdownRef}>
                         <div className="profile-icon" onClick={toggleDropdown}>

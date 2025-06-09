@@ -20,15 +20,15 @@ const DonationDetail = () => {
 
           <div className="donation-info">
             <div>
-              <div>Nama Yayasan</div>
+              <div className='donation-info-subtxt'>Nama Yayasan</div>
               <div className="sub-info">Jumlah donatur</div>
             </div>
             <div>
-              <div>Nama Penerima</div>
+              <div className='donation-info-subtxt'>Nama Penerima</div>
               <div className="sub-info">Waktu Mulai</div>
             </div>
             <div>
-              <div>Kategori Donasi</div>
+              <div className='donation-info-subtxt'>Kategori Donasi</div>
               <div className="sub-info">Waktu Berakhir</div>
             </div>
           </div>

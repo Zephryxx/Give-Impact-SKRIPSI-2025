@@ -8,13 +8,53 @@ const kategoriList = ['Semua', 'Kesehatan', 'Bencana Alam', 'Darurat', 'Pendidik
 
 // Contoh data kampanye (bisa nanti diganti dengan data dari API)
 const allCampaigns = [
-  { id: 1, title: "Bantu Operasi Anak", category: "Kesehatan" },
-  { id: 2, title: "Bantu Korban Gempa", category: "Bencana Alam" },
-  { id: 3, title: "Donasi Darurat Kebakaran", category: "Darurat" },
-  { id: 4, title: "Beasiswa Anak Desa", category: "Pendidikan" },
-  { id: 5, title: "Bantuan Pangan", category: "Bantuan Sosial" },
-  { id: 6, title: "Pengobatan Gratis", category: "Kesehatan" }
+  {
+    id: 1,
+    title: "Bantu Operasi Anak",
+    category: "Kesehatan",
+    foundationName: "Yayasan Kasih Sehat",
+    amount: 12000000,
+    target: 25000000,
+    date: "2025-06-08"
+  },
+  {
+    id: 2,
+    title: "Bantu Korban Gempa",
+    category: "Bencana Alam",
+    foundationName: "Yayasan Peduli Alam",
+    amount: 18000000,
+    target: 30000000,
+    date: "2025-06-05"
+  },
+  {
+    id: 3,
+    title: "Bantuan",
+    category: "Darurat",
+    foundationName: "Yayasan Peduli Alam",
+    amount: 18000000,
+    target: 30000000,
+    date: "2025-06-05"
+  },
+  {
+    id: 4,
+    title: "Bantuan pendidikan",
+    category: "Pendidikan",
+    foundationName: "Yayasan Peduli Alam",
+    amount: 18000000,
+    target: 30000000,
+    date: "2025-06-05"
+  },
+  {
+    id: 5,
+    title: "Bantu Pembangunan",
+    category: "Bantuan Sosial",
+    foundationName: "Yayasan Peduli Alam",
+    amount: 18000000,
+    target: 30000000,
+    date: "2025-06-05"
+  },
 ];
+
 
 const KategoriButton = ({ text, onClick, isActive }) => {
   return (

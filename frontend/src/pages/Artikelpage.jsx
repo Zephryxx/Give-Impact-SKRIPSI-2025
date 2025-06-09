@@ -17,7 +17,7 @@ const Artikelepage = () => {
                 </div>
 
                 {/* Judul Artikel */}
-                <h1 className="article-title">Judul Artikel</h1>
+                <h1 className="article-title">Bantuan Donasi untuk korban banjir</h1>
 
                 {/* Isi Artikel */}
                 <div className="article-content">
