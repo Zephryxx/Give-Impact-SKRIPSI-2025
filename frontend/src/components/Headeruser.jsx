@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState, useContext} from "react";
 import '../styles/Headeruser.css';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 function useOutsideAlerter(ref, callback) {

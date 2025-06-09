@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const app = express();
+const PORT = process.env.PORT || 8081;
+
 app.use(cors());
 app.use(express.json());
 
@@ -111,9 +113,9 @@ app.post('/api/register/donatur', async (req, res) => {
 });
 
 app.post('/api/register/foundation', async (req, res) => {
-    const { nama_user, nama_foundation, email, no_telp, password, no_pajak, rekening } = req.body; 
+    const { nama_user, nama_foundation, email, no_telp, password, no_pajak, rekening, j_provider } = req.body; 
 
-    if (!nama_user || !nama_foundation || !email || !no_telp || !password || !no_pajak || !rekening) {
+    if (!nama_user || !nama_foundation || !email || !no_telp || !password || !no_pajak || !rekening || !j_provider) {
         return res.status(400).json({ message: "All fields (nama foundation, nama user, email, nomor telepon, password, no_pajak, rekening) are required" });
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -130,15 +132,18 @@ app.post('/api/register/foundation', async (req, res) => {
     if (no_pajak.trim().length < 5) { 
         return res.status(400).json({ message: "Tax number (no_pajak) seems too short." });
     }
-    if (!rekening.includes(" - ") || rekening.split(" - ")[0].trim().length < 5 || rekening.split(" - ")[1].trim().length < 2) {
-        return res.status(400).json({ message: "Account details (number - provider) format seems incorrect or too short." });
-    }
     if (nama_foundation.trim().length < 5) {
         return res.status(400).json({ message: "Foundation name must be at least 5 characters." });
     }
     if (nama_user.trim().length < 5) {
         return res.status(400).json({ message: "name must be at least 5 characters." });
     }
+
+    const initialRekening = [{
+        provider: j_provider,
+        number: rekening
+    }];
+    const rekeningJson = JSON.stringify(initialRekening);
 
     let connection;
     try {
@@ -166,7 +171,7 @@ app.post('/api/register/foundation', async (req, res) => {
         }
 
 const foundationInsertQuery = 'INSERT INTO Foundation (user_ID, nama_foundation, no_telp, no_pajak, rekening) VALUES (?, ?, ?, ?, ?)';
-        await connection.execute(foundationInsertQuery, [newUserId, nama_foundation, no_telp, no_pajak, rekening]);
+        await connection.execute(foundationInsertQuery, [newUserId, nama_foundation, no_telp, no_pajak, rekeningJson]);
 
         await connection.commit();
         res.status(201).json({ message: "Foundation registered successfully!" });
@@ -244,9 +249,190 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 8081;
+const verifyToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token == null) {
+        return res.sendStatus(401);
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            console.error("Token verification error:", err.message);
+            return res.sendStatus(403);
+        }
+        req.user = user; 
+        next();
+    });
+};
+
+app.get('/api/profile/donatur', verifyToken, async (req, res) => {
+    const userId = req.user.userId;
+
+    if (!userId) {
+        return res.status(400).json({ message: "User ID not found in token." });
+    }
+    
+    let connection;
+    try {
+        connection = await db.getConnection();
+        const sql = `
+            SELECT 
+                u.nama AS username, 
+                u.email, 
+                d.no_telp
+            FROM \`User\` u
+            JOIN Donor d ON u.User_ID = d.user_ID
+            WHERE u.User_ID = ?`;
+
+        const [rows] = await connection.execute(sql, [userId]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "Donor profile not found." });
+        }
+
+        res.json(rows[0]); 
+
+    } catch (error) {
+        console.error("Error fetching donor profile:", error);
+        res.status(500).json({ message: "Failed to retrieve profile data." });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+app.get('/api/profile/foundation', verifyToken, async (req, res) => {
+    const userId = req.user.userId;
+    if (!userId) {
+        return res.status(400).json({ message: "User ID not found in token." });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        
+        const sql = `
+            SELECT 
+                u.nama AS username, 
+                u.email, 
+                f.nama_foundation,
+                f.no_telp,
+                f.no_pajak,
+                f.rekening
+            FROM \`User\` u
+            JOIN Foundation f ON u.User_ID = f.user_ID
+            WHERE u.User_ID = ?`;
+
+        const [rows] = await connection.execute(sql, [userId]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "Foundation profile not found." });
+        }
+
+        let profile = rows[0];
+
+        let parsedRekening = [];
+        try {
+
+            if (profile.rekening && typeof profile.rekening === 'string') {
+                parsedRekening = JSON.parse(profile.rekening);
+            }
+        } catch (e) {
+            console.error("Could not parse rekening JSON, defaulting to empty array. Error:", e.message);
+        }
+
+        profile.rekening = Array.isArray(parsedRekening) ? parsedRekening : [];
+        
+        res.json(profile);
+
+    } catch (error) {
+        console.error("Error fetching foundation profile:", error);
+        res.status(500).json({ message: "Failed to retrieve profile data." });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+app.put('/api/profile/donatur', verifyToken, async (req, res) => {
+    const userId = req.user.userId;
+    const { name, email, phone } = req.body;
+
+    if (!name || !email || !phone) {
+        return res.status(400).json({ message: "Name, email, and phone are required." });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: "Invalid email format." });
+    }
+    const phoneRegex = /^\d{10,15}$/;
+    if (!phoneRegex.test(phone)) {
+        return res.status(400).json({ message: "Invalid phone number format." });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [existingUsers] = await connection.execute(
+            'SELECT User_ID FROM `User` WHERE email = ? AND User_ID != ?',
+            [email, userId]
+        );
+
+        if (existingUsers.length > 0) {
+            await connection.rollback();
+            return res.status(409).json({ message: "This email address is already in use by another account." });
+        }
+
+        const updateUserSql = 'UPDATE `User` SET nama = ?, email = ? WHERE User_ID = ?';
+        await connection.execute(updateUserSql, [name, email, userId]);
+
+        const updateDonorSql = 'UPDATE Donor SET no_telp = ? WHERE user_ID = ?';
+        await connection.execute(updateDonorSql, [phone, userId]);
+
+        await connection.commit();
+        
+        res.json({ message: 'Profile updated successfully!' });
+
+    } catch (error) {
+        if (connection) await connection.rollback();
+        console.error("Error updating donor profile:", error);
+        res.status(500).json({ message: "Failed to update profile." });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+app.put('/api/profile/foundation', verifyToken, async (req, res) => {
+    const userId = req.user.userId;
+    const { nama_foundation, no_telp, no_pajak, rekeningList } = req.body;
+
+    if (!nama_foundation || !no_telp || !no_pajak || !rekeningList || !Array.isArray(rekeningList)) {
+        return res.status(400).json({ message: "Missing required profile fields, or rekening data is not an array." });
+    }
+
+    const rekeningJsonString = JSON.stringify(rekeningList);
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        const sql = 'UPDATE Foundation SET nama_foundation = ?, no_telp = ?, no_pajak = ?, rekening = ? WHERE user_ID = ?';
+        await connection.execute(sql, [nama_foundation, no_telp, no_pajak, rekeningJsonString, userId]);
+
+        res.json({ message: 'Foundation profile updated successfully!' });
+
+    } catch (error) {
+        console.error("Error updating foundation profile:", error);
+        res.status(500).json({ message: "Failed to update profile." });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+
 app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+    console.log(`Server listening on port http://localhost:${PORT}`);
 });
 
 process.on('SIGINT', async () => {

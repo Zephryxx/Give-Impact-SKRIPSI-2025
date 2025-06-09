@@ -89,6 +89,15 @@
   cursor: pointer;
 }
 
+.rekening-button {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background: white;
+  cursor: pointer;
+}
+
 .edit-button:hover{
   background-color: #00dddd;
 }
