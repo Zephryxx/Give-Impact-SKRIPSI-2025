@@ -33,10 +33,11 @@ function Loginpage() {
         });
 
         const data = await response.json();
-
+        
         if (!response.ok) {
                 setErrorMsg(data.message || `Login failed. Status: ${response.status}`);
             } else {
+                localStorage.setItem('authToken', data.token);
                 login(data.user, data.token);
                 setErrorMsg('');
                 const userType = data.user.tipe_akun;
