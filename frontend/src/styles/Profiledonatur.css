@@ -204,14 +204,6 @@
     border-radius: 4px;
 }
 
-.preview-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    margin-top: 10px;
-    border-radius: 8px;
-}
-
 .submit-button {
     background-color: #4caf50;
     color: white;
