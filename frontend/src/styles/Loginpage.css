@@ -99,3 +99,50 @@
     margin-top: 10px;
     font-size: 14px;
 }
+
+/*Pop Up */
+.popup-overlay-resetPassword{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.popup-content-resetPassword{
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    z-index: 1000; 
+    position: relative;
+    width: 400px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.form-resetPassword {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+.input-resetPassword {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}

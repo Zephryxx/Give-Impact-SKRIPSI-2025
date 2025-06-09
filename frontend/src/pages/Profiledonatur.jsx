@@ -48,15 +48,6 @@ function Profiledonatur() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-        setFormData(prev => ({
-            ...prev,
-        }));
-        }
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Submitting data:", formData);
