@@ -303,6 +303,7 @@ app.post('/api/login', async (req, res) => {
 });
 //#endregion
 
+//#region FOUNDATION_MENU
 app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (req, res) => {
 
     const { userId, tipe_akun } = req.user;
@@ -356,6 +357,7 @@ app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (r
         }
     }
 });
+//#endregion
 
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {

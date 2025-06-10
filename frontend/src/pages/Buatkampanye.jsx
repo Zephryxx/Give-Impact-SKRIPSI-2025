@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../styles/Buatkampanye.css'
 import Headeruser from '../components/Headeruser';
 import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const kategoriOptions = ["Kategori 1", "Kategori 2", "Kategori 3", "Kategori 4", "Kategori 5"];
 
 const Buatkampanye = () => {
     const navigate = useNavigate();
+    const { authState } = useContext(AuthContext);
+    
     const [formData, setFormData] = useState({
         kategori: '',
         judul: '',
@@ -95,12 +98,12 @@ const Buatkampanye = () => {
             return;
         }
 
-        const token = localStorage.getItem('authToken');
+        const token = authState.token;
         if (!token) {
-            setError("Session Expired. Please re-login");
-            setIsLoading(false);
+            setError("Sesi telah berakhir. Silakan login kembali.");
             return;
         }
+        
         setIsLoading(true);
 
         const dataToSubmit = new FormData();
