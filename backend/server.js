@@ -267,6 +267,65 @@ const verifyToken = (req, res, next) => {
     });
 };
 
+app.post('/api/password/check-email', async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ message: "Email is required." });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        const sql = 'SELECT User_ID FROM `User` WHERE email = ?';
+        const [users] = await connection.execute(sql, [email]);
+
+        if (users.length === 0) {
+            return res.status(404).json({ message: "No account found with that email address." });
+        }
+        res.json({ message: "Email confirmed. You can now reset your password." });
+
+    } catch (error) {
+        console.error("Error checking email:", error);
+        res.status(500).json({ message: "Server error while checking email." });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+app.put('/api/password/reset', async (req, res) => {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+        return res.status(400).json({ message: "Email and new password are required." });
+    }
+    if (newPassword.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters long." });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+        const sql = 'UPDATE `User` SET password = ? WHERE email = ?';
+        const [result] = await connection.execute(sql, [hashedPassword, email]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "No account found with that email address to update." });
+        }
+
+        res.json({ message: "Password has been reset successfully!" });
+
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        res.status(500).json({ message: "Server error while resetting password." });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
 app.get('/api/profile/donatur', verifyToken, async (req, res) => {
     const userId = req.user.userId;
 

@@ -59,27 +59,83 @@ function Loginpage() {
 
   /*Pop Up*/
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    newPassword:"",
-    confirmPassword:"",
-  });
+  const [resetStep, setResetStep] = useState(1);
+  const [resetEmail, setResetEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [resetMessage, setResetMessage] = useState('');
 
-  const handleInputChange = (e) =>{
-    const {newPassword, value} = e.target;
-    setFormData(prev => ({ ...prev, [newPassword]: value}));
-  };
+  const handleOpenPopup = () => {
+        setIsPopupOpen(true);
+        setResetStep(1);
+        setResetEmail('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+        setResetMessage('');
+    };
 
-  const handleSubmit = (e) =>{
-    e.preventDefault();
-    console.log("Submitting data:", formData)
-    alert("Form Submitted!");
+  const handleCheckEmail = async () => {
+        setIsLoading(true);
+        setResetMessage('');
+        try {
+            const response = await fetch('http://localhost:8081/api/password/check-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: resetEmail }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message);
+            
+            setResetMessage(data.message);
+            setResetStep(2);
 
-    setFormData({
-        newPassword:"",
-        confirmPassword:"",
-    });
-    setIsPopupOpen(false);
-  }
+        } catch (err) {
+            setResetMessage(err.message || 'An error occurred.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+  const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (newPassword !== confirmNewPassword) {
+            setResetMessage("Passwords do not match. Please try again.");
+            return;
+        }
+        if (newPassword.length < 6) {
+            setResetMessage("Password must be at least 6 characters long.");
+            return;
+        }
+        
+        setIsLoading(true);
+        setResetMessage('Resetting password...');
+
+        try {
+            const response = await fetch('http://localhost:8081/api/password/reset', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: resetEmail, newPassword: newPassword }),
+            });
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'An unknown error occurred during reset.');
+            }
+
+            setResetMessage(data.message + " You can now log in.");
+            setTimeout(() => {
+                setIsPopupOpen(false);
+            }, 500);
+
+        } catch (err) {
+            console.error("Password reset submission failed:", err);
+            setResetMessage(err.message || "An unexpected error occurred. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="login-container">
             <div className="wrapperLogin">
@@ -108,7 +164,7 @@ function Loginpage() {
                         required
                     />
 
-                    <Link className="greyText" onClick={() => setIsPopupOpen(true)}>Forgot Password?</Link>
+                    <Link className="greyText" onClick={handleOpenPopup}>Forgot Password?</Link>
                     {isPopupOpen &&(
                         <div className="popup-overlay-resetPassword">
                             <div className="popup-content-resetPassword">
@@ -117,28 +173,26 @@ function Loginpage() {
                                 </button>
 
                                 <h2 className="resetPassword-title">Reset Password</h2>
-                                <form onSubmit={handleSubmit} className='form-resetPassword'>
-                                    <input 
-                                    type="text" 
-                                    className="input-resetPassword" 
-                                    name='newPassword'
-                                    placeholder='New Password'
-                                    value={formData.newPassword}
-                                    onChange={handleInputChange}
-                                    required
-                                    />
-                                    <input 
-                                    type="text" 
-                                    className="input-resetPassword" 
-                                    name='confirmPassword'
-                                    placeholder='Confirm Password'
-                                    value={formData.newPassword}
-                                    onChange={handleInputChange}
-                                    required
-                                    />
-
-                                    <button type="submit"className="submit-button">Confirm</button>
-                                </form>
+                                {resetStep === 1 && (
+                                    <div className='form-resetPassword'>
+                                        <p>Enter the email address associated with your account.</p>
+                                        <input type="email" className="input-resetPassword" name='checkEmail' placeholder='Email Address' value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} required />
+                                        <button type="button" className='submit-button' onClick={handleCheckEmail} disabled={isLoading}>
+                                            {isLoading ? 'Checking...' : 'Confirm Email'}
+                                        </button>
+                                    </div>
+                                )}
+                                {resetStep === 2 && (
+                                    <div className='form-resetPassword'>
+                                        <p>Enter your new password for <strong>{resetEmail}</strong>.</p>
+                                        <input type="password" className="input-resetPassword" name='newPassword' placeholder='New Password' value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+                                        <input type="password" className="input-resetPassword" name='confirmPassword' placeholder='Confirm New Password' value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} required />
+                                        <button type="button" className="submit-button" onClick={handleSubmit} disabled={isLoading}>
+                                            {isLoading ? 'Resetting...' : 'Confirm Reset'}
+                                        </button>
+                                    </div>
+                                )}
+                                {resetMessage && <p className="popup-message">{resetMessage}</p>}
                             </div>
                         </div>
                     )}
