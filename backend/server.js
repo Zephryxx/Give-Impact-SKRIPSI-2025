@@ -364,6 +364,74 @@ app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (r
 });
 //#endregion
 
+//#region DONATUR_MENU
+app.post('/api/donate', authenticateToken, async (req, res) => {
+    
+    const { userId, tipe_akun } = req.user;
+    const { jumlah, pesan, tipe_pemb, kampanyeId, foundationId } = req.body; // kampanyeId & foundationId adalah placeholder
+
+    if (tipe_akun !== 'Donatur') {
+        return res.status(403).json({ message: "Akses ditolak: Hanya donatur yang dapat melakukan donasi." });
+    }
+    if (!jumlah || jumlah <= 0 || !tipe_pemb || !kampanyeId || !foundationId) {
+        return res.status(400).json({ message: "Data tidak lengkap" });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [donors] = await connection.execute('SELECT donor_ID FROM donor WHERE user_ID = ?', [userId]);
+        if (donors.length === 0) {
+            throw new Error('Donor tidak ditemukan untuk current user');
+        }
+        const donor_ID = donors[0].donor_ID;
+
+        // Untuk tipe pembayaran dan nomor rekening perlu dipertimbangkan mau hardcode atau DB
+        const provider = tipe_pemb.split(' ').pop(); // Mengambil kata terakhir, misal "BCA" dari "Transfer VA BCA"
+        const code_transaksi = 'INV' + Date.now(); // Membuat kode transaksi sederhana & unik
+
+        const pembayaranQuery = `
+            INSERT INTO pembayaran (donor_ID, foundation_ID, tipe_pemb, provider, code_transaksi)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        const pembayaranValues = [
+            donor_ID, foundationId, tipe_pemb, provider, code_transaksi 
+        ];
+        const [pembayaranResult] = await connection.execute(pembayaranQuery, pembayaranValues);
+        const newPembayaranId = pembayaranResult.insertId;
+
+        const donasiQuery = `
+            INSERT INTO donasi (donor_ID, kampanye_ID, pembayaran_ID, jumlah, tgl_donasi, pesan, status)
+            VALUES (?, ?, ?, ?, NOW(), ?, 'Pending')
+        `;
+        const donasiValues = [
+            donor_ID, kampanyeId, newPembayaranId, jumlah, pesan    
+        ];
+        await connection.execute(donasiQuery, donasiValues);
+
+        await connection.commit();
+
+        res.status(201).json({ 
+            message: "Donasi berhasil! Terima kasih atas kebaikan Anda.",
+            transactionCode: code_transaksi
+        });
+
+    } catch (error) {
+        console.error("Error saat proses donasi:", error);
+        if (connection) {
+            await connection.rollback();
+        }
+        res.status(500).json({ message: "Gagal memproses donasi karena kesalahan server." });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
+    }
+});
+//#endregion
+
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
