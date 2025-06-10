@@ -1,8 +1,21 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useContext } from 'react'
+import { AuthContext } from '../context/AuthContext'; 
 import '../styles/Profilefoundation.css'
 import Headeruser from '../components/Headeruser';
 function Profilefoundation() {
     
+    const { authState } = useContext(AuthContext);
+    const [profileData, setProfileData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const providerOptions = ["BCA", "OVO", "DANA", "GOPAY", "Mandiri", "BNI"];
+
+    const [selectedProvider, setSelectedProvider] = useState(providerOptions[0]);
+    const [displayNumber, setDisplayNumber] = useState('-');
+
+    const [rekening, setRekening] = useState('-');
+    const [provider, setProvider] = useState('');
+
     const dummyData = [
         {
             nama: 'Bantu Pendidikan Anak Desa',
@@ -55,51 +68,117 @@ function Profilefoundation() {
         },
     ];
 
-    const [provider, setProvider] = useState("");
-
     /* Pop Up Edit*/
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        address: "",
-        picture: null,
-        previewImage: "",
-    });
-        
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+    const [editData, setEditData] = useState('');
+
+    useEffect(() => {
+    
+        const fetchProfileData = async () => {
+            if (!authState.token) return;
+            try {
+                const response = await fetch('http://localhost:8081/api/profile/foundation', {
+                    headers: { 'Authorization': `Bearer ${authState.token}` },
+                });
+                if (!response.ok) throw new Error('Failed to fetch profile.');
+                const data = await response.json();
+                setProfileData(data);
+                setEditData(data); 
+
+                if (!Array.isArray(data.rekening)) {
+                    data.rekening = [];
+                }
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProfileData();
+    }, [authState.token]);
+
+    const handleOpenPopup = () => {
+        setEditData({ ...profileData, rekening: Array.isArray(profileData.rekening) ? profileData.rekening : [] });
+        setProvider('');
+        setRekening('');
+        setIsPopupOpen(true);
     };
-        
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-        setFormData(prev => ({
-            ...prev,
-            picture: file,
-            previewImage: URL.createObjectURL(file),
-        }));
+
+    useEffect(() => {
+        if (profileData && Array.isArray(profileData.rekening)) {
+            const account = profileData.rekening.find(acc => acc.provider === selectedProvider);
+            setDisplayNumber(account ? account.number : '-');
+        } else {
+            setDisplayNumber('-');
+        }
+    }, [profileData, selectedProvider]);
+
+    const handleDisplayProviderChange = (e) => {
+        setSelectedProvider(e.target.value);
+    };
+
+    const handleInputChange = (e) => {
+        const { foundation, value } = e.target;
+        setEditData(prev => ({ ...prev, [foundation]: value }));
+    };
+
+    const handleProviderSelectInPopup = (e) => {
+        const providerName = e.target.value;
+        setProvider(providerName);
+        const existingAccount = Array.isArray(editData.rekening) ? editData.rekening.find(r => r.provider === providerName) : null;
+        setRekening(existingAccount ? existingAccount.number : '');
+    };
+
+    const handleUpdateRekeningList = () => {
+        if (!provider || !rekening) {
+            alert("Please select a provider and enter an account number.");
+            return;
+        }
+        const updatedList = [...editData.rekening];
+        const existingAccountIndex = updatedList.findIndex(r => r.provider === provider);
+
+        if (existingAccountIndex > -1) {
+            updatedList[existingAccountIndex] = { provider: provider, number: rekening };
+        } else {
+            updatedList.push({ provider: provider, number: rekening });
+        }
+        setEditData(prev => ({ ...prev, rekening: updatedList }));
+        setProvider('');
+        setRekening('');
+    };
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        try {
+            const payload = {
+                nama_foundation: editData.nama_foundation,
+                no_telp: editData.no_telp,
+                no_pajak: editData.no_pajak,
+                rekeningList: editData.rekening
+            };
+
+            const response = await fetch('http://localhost:8081/api/profile/foundation', {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${authState.token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error((await response.json()).message || "Failed to update profile.");
+            
+            setProfileData(editData);
+            setIsPopupOpen(false);
+
+        } catch (err) {
+            setError(err.message);
         }
     };
     
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Submitting data:", formData);
-        alert("Form submitted!");
+    if (loading) return <div>Loading...</div>;
+    if (error && !profileData) return <div>Error: {error}</div>;
+    if (!profileData) return <div>No profile data found.</div>;
 
-        setFormData({
-            name: "",
-            email: "",
-            phone: "",
-            address: "",
-            picture: null,
-            previewImage: "",
-        });
-        setIsPopupOpen(false);
-    };
-    
+
+
     return (
         <div className="foundation-profile">
             {/* Header */}
@@ -108,65 +187,63 @@ function Profilefoundation() {
             {/* Profile Section */}
             <div className="profile-section">
 
-                <h2 className="profile-title">Profile</h2>
+                <h2 className="profile-title-foundation">Profile</h2>
 
-                <div className="profile-box">
-                    <div className="profile-picture"></div>
+                <div className="profile-box-foundation">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="8rem" height="8rem" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                        <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                    </svg>
+                    
                     <div className="profile-form">
                         <div className="form-rows">
 
-                            <div className="left-fields">
-                                <div className="field">
+                            <div className="left-fields-foundation">
+                                <div className="field-foundation">
                                 <label className='profile-label'>Foundation:</label>
-                                <input className='input-profile' type="text" value="Sejahtera" readOnly/>
+                                <input className='input-profile-foundation' type="text" value={profileData.nama_foundation} readOnly/>
                                 </div>
 
-                                <div className="field">
+                                <div className="field-foundation">
                                 <label className='profile-label'>Username:</label>
-                                <input className='input-profile' type="text" value="Masbro" readOnly/>
+                                <input className='input-profile-foundation' type="text" value={profileData.username} readOnly/>
                                 </div>
 
-                                <div className="field">
+                                <div className="field-foundation">
                                 <label className='profile-label'>Email:</label>
-                                <input className='input-profile' type="text" value="masbro@gmail.com" readOnly />
+                                <input className='input-profile-foundation' type="text" value={profileData.email} readOnly />
                                 </div>
 
-                                <div className="field">
+                                <div className="field-foundation">
                                 <label className='profile-label'>No. Telpon:</label>
-                                <input className='input-profile' type="number" value="08112999291" readOnly />
+                                <input className='input-profile-foundation' type="number" value={profileData.no_telp} readOnly />
                                 </div>
 
                             </div>
 
-                            <div className="right-field">
-                                <div className="field">
+                            <div className="right-fields-foundation">
+                                <div className="field-foundation">
                                     <label className='profile-label'>No. Pajak:</label>
-                                    <input className='input-profile' type="number" value="0811299232" readOnly />
+                                    <input className='input-profile-foundation' type="number" value={profileData.no_pajak} readOnly />
                                 </div>
 
-                                <div className="field">
+                                <div className="field-foundation">
                                     <label className='profile-label'>Jenis Provider:</label>
-                                    <select
-                                        className='input-profile'
-                                        value={provider}
-                                        onChange={(e) => setProvider(e.target.value)}
-                                        >
-                                        <option value="1"></option>
-                                        <option value="a">a</option>
-                                        <option value="b">b</option>
-                                        <option value="c">c</option>
-                                        <option value="d">d</option>
-                                        <option value="e">e</option>
+                                    <select className='select-profile-foundation' value={selectedProvider} onChange={handleDisplayProviderChange} disabled>
+                                        {providerOptions.map(provider => (
+                                            <option key={provider} value={provider}>{provider}</option>
+                                        ))}
                                     </select>
                                 </div>
 
-                                <div className="field">
+                                <div className="field-foundation">
                                     <label className='profile-label'>No. Rekening:</label>
-                                    <input className='input-profile' type="number" value="081121491" readOnly />
+                                    <input className='input-profile-foundation' type="text" value={displayNumber} readOnly />
                                 </div>
                             </div>
                         </div>
-                        <button className="edit-button"onClick={() => setIsPopupOpen(true)}>Edit Profile</button>
+                        <button className="edit-button"onClick={handleOpenPopup}>Edit Profile</button>
 
                         {isPopupOpen && (
                             <div className="popup-overlay">
@@ -179,88 +256,73 @@ function Profilefoundation() {
                                     <form onSubmit={handleSubmit} className="editprofile-form-user">
 
                                         <input
-                                        className='input-editprofile'
-                                        type="text"
-                                        name="name"
-                                        placeholder="Foundation"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        required
+                                            className='input-editprofile'
+                                            type="text"
+                                            name="name"
+                                            placeholder="Foundation"
+                                            value={editData.nama_foundation}
+                                            onChange={handleInputChange}
+                                            required
                                         />
 
                                         <input
-                                        className='input-editprofile'
-                                        type="text"
-                                        name="name"
-                                        placeholder="Full Name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        required
+                                            className='input-editprofile'
+                                            type="text"
+                                            name="name"
+                                            placeholder="Full Name"
+                                            value={editData.username}
+                                            onChange={handleInputChange}
+                                            required
                                         />
 
                                         <input
-                                        className='input-editprofile'
-                                        type="text"
-                                        name="Email"
-                                        placeholder="Email"
-                                        value={formData.price}
-                                        onChange={handleInputChange}
-                                        required
-                                        min="0"
-                                        step="0.01"
+                                            className='input-editprofile'
+                                            type="text"
+                                            name="Email"
+                                            placeholder="Email"
+                                            value={editData.email}
+                                            onChange={handleInputChange}
+                                            required
                                         />
 
                                         <input
-                                        className='input-editprofile'
-                                        type="tel"
-                                        name="phone"
-                                        placeholder="Phone Number"
-                                        value={formData.phone}
-                                        onChange={handleInputChange}
-                                        required
+                                            className='input-editprofile'
+                                            type="tel"
+                                            name="phone"
+                                            placeholder="Phone Number"
+                                            value={editData.no_telp}
+                                            onChange={handleInputChange}
+                                            required
+                                            min="0"
+                                            step="0.01"
                                         />
 
                                         <input
-                                        className='input-editprofile'
-                                        type='number'w
-                                        name="pajak"
-                                        placeholder="No.Pajak"
-                                        value={formData.address}
-                                        onChange={handleInputChange}
-                                        required
-                                        rows="3"
+                                            className='input-editprofile'
+                                            type='number'w
+                                            name="pajak"
+                                            placeholder="No.Pajak"
+                                            value={editData.no_pajak}
+                                            onChange={handleInputChange}
+                                            required
+                                            min="0"
+                                            step="0.01"
                                         />
-                                        <input
-                                        className='input-editprofile'
-                                        type='text'
-                                        name="provider"
-                                        placeholder="Jenis Provider"
-                                        value={formData.address}
-                                        onChange={handleInputChange}
-                                        required
-                                        rows="3"
+                                        <select 
+                                            className="input-editprofile" 
+                                            placeholder="Jenis Provider" 
+                                            value={provider} 
+                                            onChange={handleProviderSelectInPopup}>
+                                            <option value="" disabled>Pilih Jenis Provider</option>
+                                            {providerOptions.map(p => <option key={p} value={p}>{p}</option>)}
+                                        </select>
+                                        <input 
+                                            className="input-editprofile"
+                                            placeholder="No. Rekening"
+                                            value={rekening} 
+                                            onChange={(e) => setRekening(e.target.value)} 
                                         />
-                                        <input
-                                        className='input-editprofile'
-                                        type='number'
-                                        name="rek"
-                                        placeholder="No. Rekening"
-                                        value={formData.address}
-                                        onChange={handleInputChange}
-                                        required
-                                        rows="3"
-                                        />
-
-                                        <input type="file" accept="image/*" onChange={handleImageChange} />
-
-                                        {formData.previewImage && (
-                                        <img
-                                            src={formData.previewImage}
-                                            alt="Preview"
-                                            className="preview-image-editprofile"
-                                        />
-                                        )}
-
+                                        <button type="button" className='rekening-button' onClick={handleUpdateRekeningList}>Add / Update Rekening</button>
                                         <button type="submit" className='submit-button'>Submit</button>
                                     </form>
                                 </div>

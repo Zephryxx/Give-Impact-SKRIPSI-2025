@@ -30,18 +30,18 @@
     align-items: center;
 }
 
-.profile-icon {
+.profile-icon-box{
     background-color: white;
     border-radius: 9999px;
     width: 2rem;
     height: 2rem;
     margin-right: 50px;
+    cursor: pointer;
 }
 
 .dropdown-menu-profile {
     position: relative;
     width: 250px;
-    top: 30px;
     right: 230px;
     padding: 0.1rem;
     background-color: hsl(231, 41%, 97%);

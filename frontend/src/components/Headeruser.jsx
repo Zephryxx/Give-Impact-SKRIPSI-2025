@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState, useContext} from "react";
 import '../styles/Headeruser.css';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 function useOutsideAlerter(ref, callback) {
@@ -78,7 +78,7 @@ function Headeruser() {
                     </>
                 )}
             </div>
-            <div className="profile-icon">
+            <div className="profile-icon-box">
                 {isAuthenticated ? (
                     <div className="profile-icon-wrapper" ref={dropdownRef}>
                         <div className="profile-icon" onClick={toggleDropdown}>

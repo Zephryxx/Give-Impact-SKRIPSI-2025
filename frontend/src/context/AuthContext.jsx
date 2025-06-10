@@ -9,15 +9,25 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: false,
     });
 
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (token && user) {
-            setAuthState({
-                token,
-                user,
-                isAuthenticated: true,
-            });
+        try {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (token && user) {
+                setAuthState({
+                    token,
+                    user,
+                    isAuthenticated: true,
+                });
+            }
+        } catch (error) {
+            console.error("Failed to parse auth data from localStorage", error);
+            setAuthState({ token: null, user: null, isAuthenticated: false });
+        } finally {
+            setLoading(false);
         }
     }, []);
 
@@ -42,7 +52,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ authState, login, logout }}>
+        <AuthContext.Provider value={{ authState, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

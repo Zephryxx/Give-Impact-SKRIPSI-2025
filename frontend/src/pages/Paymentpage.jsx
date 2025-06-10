@@ -58,7 +58,7 @@ const Paymentpage = () => {
       <Headeruser/>
       <main className="payment-content">
         <section className="payment-section box-nominal">
-          <label className="section-title">Nominal Donasi</label>
+          <label className="section-title-payment">Nominal Donasi</label>
           <div className="donation-amounts">
             {[10000, 30000, 50000, 100000].map((amount, index) => (
               <button
@@ -83,7 +83,7 @@ const Paymentpage = () => {
           </div>
 
           <div className="prayer-section">
-            <label className='label-info'>Dukungan atau Doa</label>
+            <label className='label-info'>Dukungan atau Doa(*Opsional)</label>
             <textarea
               className="prayer-textarea"
               placeholder="Tuliskan doa atau dukunganmu..."

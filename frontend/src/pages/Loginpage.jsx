@@ -57,7 +57,30 @@ function Loginpage() {
     }
   };
 
-  return (
+  /*Pop Up*/
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    newPassword:"",
+    confirmPassword:"",
+  });
+
+  const handleInputChange = (e) =>{
+    const {newPassword, value} = e.target;
+    setFormData(prev => ({ ...prev, [newPassword]: value}));
+  };
+
+  const handleSubmit = (e) =>{
+    e.preventDefault();
+    console.log("Submitting data:", formData)
+    alert("Form Submitted!");
+
+    setFormData({
+        newPassword:"",
+        confirmPassword:"",
+    });
+    setIsPopupOpen(false);
+  }
+    return (
         <div className="login-container">
             <div className="wrapperLogin">
                 <form className='login-form' onSubmit={handleLogin}> 
@@ -85,8 +108,40 @@ function Loginpage() {
                         required
                     />
 
-                    <Link className="greyText" to="/forgot-password">Forgot Password?</Link>
+                    <Link className="greyText" onClick={() => setIsPopupOpen(true)}>Forgot Password?</Link>
+                    {isPopupOpen &&(
+                        <div className="popup-overlay-resetPassword">
+                            <div className="popup-content-resetPassword">
+                                <button className="close-btn" onClick={() => setIsPopupOpen(false)}>
+                                    &times;
+                                </button>
 
+                                <h2 className="resetPassword-title">Reset Password</h2>
+                                <form onSubmit={handleSubmit} className='form-resetPassword'>
+                                    <input 
+                                    type="text" 
+                                    className="input-resetPassword" 
+                                    name='newPassword'
+                                    placeholder='New Password'
+                                    value={formData.newPassword}
+                                    onChange={handleInputChange}
+                                    required
+                                    />
+                                    <input 
+                                    type="text" 
+                                    className="input-resetPassword" 
+                                    name='confirmPassword'
+                                    placeholder='Confirm Password'
+                                    value={formData.newPassword}
+                                    onChange={handleInputChange}
+                                    required
+                                    />
+
+                                    <button type="submit"className="submit-button">Confirm</button>
+                                </form>
+                            </div>
+                        </div>
+                    )}
                     {errorMsg && <p className="error-message">{errorMsg}</p>}
 
                     <button className="login-button" type='submit' disabled={isLoading}>

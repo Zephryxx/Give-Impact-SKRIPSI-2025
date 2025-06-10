@@ -71,8 +71,6 @@ function Registerfoundation() {
 
         setIsLoading(true);
 
-        const rekeningGabung = `${rekening.trim()} - ${jenisProvider}`;
-
         try {
             const response = await fetch('http://localhost:8081/api/register/foundation', { 
                 method: 'POST',
@@ -86,7 +84,8 @@ function Registerfoundation() {
                     no_telp: phoneNumber,
                     password: password,
                     no_pajak: noPajak,
-                    rekening: rekeningGabung,
+                    rekening: rekening,
+                    j_provider: jenisProvider
                 }),
             });
 
