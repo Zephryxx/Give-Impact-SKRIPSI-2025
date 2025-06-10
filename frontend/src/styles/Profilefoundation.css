@@ -74,9 +74,12 @@
   border-radius: 4px;
 }
 
-.input-profile-address {
-  height: 60px;
-  resize: vertical;
+.select-profile-foundation{
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #000;
 }
 
 .edit-button {

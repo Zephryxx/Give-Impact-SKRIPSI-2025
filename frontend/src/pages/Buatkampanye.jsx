@@ -52,7 +52,20 @@ const Buatkampanye = () => {
                     {/* Kategori donasi */}
 
                 <label className='label-buatkampanye'>Kategori Donasi</label>
-                <input className='input-buatkampanye' type="text" name="kategori" value={formData.kategori} onChange={handleChange} required />
+                <select
+                    className="input-buatkampanye"
+                    name="kategori"
+                    value={formData.kategori}
+                    onChange={handleChange}
+                    required
+                    >
+                    <option value="" hidden>Pilih Kategori</option>
+                    <option value="Bencana Alam">Bencana Alam</option>
+                    <option value="Pendidikan">Pendidikan</option>
+                    <option value="Kesehatan">Kesehatan</option>
+                    <option value="Lingkungan">Lingkungan</option>
+                    <option value="Sosial">Sosial</option>
+                </select>
 
                     {/* judul donasi */}
 

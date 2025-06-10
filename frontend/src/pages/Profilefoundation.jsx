@@ -230,7 +230,7 @@ function Profilefoundation() {
 
                                 <div className="field-foundation">
                                     <label className='profile-label'>Jenis Provider:</label>
-                                    <select className='input-profile-foundation' value={selectedProvider} onChange={handleDisplayProviderChange}>
+                                    <select className='select-profile-foundation' value={selectedProvider} onChange={handleDisplayProviderChange} disabled>
                                         {providerOptions.map(provider => (
                                             <option key={provider} value={provider}>{provider}</option>
                                         ))}

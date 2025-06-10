@@ -92,7 +92,7 @@ app.post('/api/register/donatur', async (req, res) => {
             throw new Error('Failed to create user record.');
         }
 
-        const donorInsertQuery = 'INSERT INTO Donor (user_ID, no_telp, alamat) VALUES (?, ?, NULL)';
+        const donorInsertQuery = 'INSERT INTO Donor (user_ID, no_telp) VALUES (?, ?)';
         await connection.execute(donorInsertQuery, [newUserId, no_telp]);
 
         await connection.commit();
