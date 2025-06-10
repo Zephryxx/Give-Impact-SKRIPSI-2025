@@ -28,10 +28,12 @@
     display: flex;
     flex-direction: column;
     padding: 3px;
+    margin-bottom: 15px;
 }
 
 .label-buatkampanye {
     font-weight: 600;
+    margin-bottom: 5px;
 }
 
 .input-buatkampanye {
@@ -40,11 +42,15 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     margin-bottom: 10px;
+    font-family: inherit;
 }
 
 .date-group {
     display: flex;
     flex-direction: row;
+}
+.date-group > div {
+    flex: 1;
 }
 
 .input-date-buatkampanye{
@@ -63,7 +69,26 @@
     width: 100%;
     transition: background-color 0.3s;
 }
-
 .submit-button:hover {
     background-color: #333;
+}
+.submit-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.preview-image-editprofile {
+    max-width: 100%;
+    height: auto;
+    margin-top: 15px;
+    border-radius: 8px;
+}
+
+.success-message {
+    color: #4F8A10;
+    background-color: #DFF2BF;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
 }
