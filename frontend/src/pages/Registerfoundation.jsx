@@ -35,40 +35,6 @@ function Registerfoundation() {
             return;
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            setError("Please enter a valid email address.");
-            return;
-        }
-        
-        if (password.length < 6) {
-            setError("Password must be at least 6 characters long.");
-            return;
-        }
-
-        const phoneRegex = /^\d{10,15}$/;
-        if (!phoneRegex.test(phoneNumber)) {
-            setError("Please enter a valid phone number (10-15 digits) for the foundation.");
-            return;
-        }
-        
-        if (noPajak.trim().length < 5) { 
-            setError("Please enter a valid tax number.");
-            return;
-        }
-        if (rekening.trim().length < 5) { 
-            setError("Please enter a valid account number.");
-            return;
-        }
-        if (foundationName.trim().length < 5) {
-            setError("Please enter a valid foundation name (at least 5 characters).")
-            return;
-        }
-        if (userName.trim().length < 5) {
-            setError("Please enter your real name (at least 5 characters).")
-            return;
-        }
-
         setIsLoading(true);
 
         try {
@@ -199,30 +165,19 @@ function Registerfoundation() {
                         required
                     />
 
-                    <h5 className='registext'>Provider Type (Jenis Provider):</h5>
-                    <select
-                        className='input-register'
-                        value={jenisProvider}
-                        onChange={(e) => setJenisProvider(e.target.value)}
-                        aria-label="Provider Type"
-                        required
-                    >
-                        <option value="" disabled>Select Provider</option>
-                        {providerOptions.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                        ))}
-                    </select>
-
-                    <h5 className='registext'>Account Number (Nomor Rekening):</h5>
-                    <input 
-                        className='input-register' 
-                        type="text" 
-                        placeholder="Enter account number only" 
-                        value={rekening}
-                        onChange={(e) => setRekening(e.target.value)}
-                        aria-label="Account Number"
-                        required
-                    />
+                    <div className="side-by-side-container">
+                        <div className="input-group">
+                            <h5 className='registext'>Provider Type:</h5>
+                            <select className='input-rekening' value={jenisProvider} onChange={(e) => setJenisProvider(e.target.value)} required>
+                                <option value="" disabled>Select Provider</option>
+                                {providerOptions.map(option => <option key={option} value={option}>{option}</option>)}
+                            </select>
+                        </div>
+                        <div className="input-group">
+                            <h5 className='registext'>Account Number:</h5>
+                            <input className='input-rekening' type="text" placeholder="Enter account number only" value={rekening} onChange={(e) => setRekening(e.target.value)} required />
+                        </div>
+                    </div>
 
                     <div className='askTxt'>
                         Already have an account?
