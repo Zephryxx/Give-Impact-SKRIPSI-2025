@@ -8,7 +8,7 @@ const Donationpagecard = ({ campaign }) => {
   return (
     <div className="donasipage-card">
       <div className="donasipage-content">
-        <div className="donasipage-image"></div>
+        <img className="donasipage-image" src={campaign.donationpageImg}/>
         <div>
           <h3>{campaign.title}</h3>
           <p>Kategori: {campaign.category}</p>

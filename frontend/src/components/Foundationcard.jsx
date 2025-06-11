@@ -2,15 +2,18 @@ import React from 'react'
 import '../styles/Foundationcard.css'
 import { useNavigate } from 'react-router-dom';
 
-const Foundationcard = ({ donationTitle, donors, daysLeft, currentAmount, targetAmount }) => {
+const Foundationcard = ({ donationId, donationImg, donationTitle,foundationName, donors, enDate, currentAmount, targetAmount }) => {
     const percentage = Math.min((currentAmount / targetAmount) * 100, 100);
     const navigate = useNavigate();
-
+    const today = new Date();
+    const end = new Date(enDate);
+    const timeDiff = end - today;
+    const daysLeft = Math.max(0, Math.ceil(timeDiff / (1000 * 60 * 60 * 24)));
     return (
         <div className="foundation-card" onClick={() => navigate('/donationcheck')}>
-            <div className="foundationcard-image" />
+            <img className="foundationcard-image" src={donationImg} />
             <div className="foundationcard-title">{donationTitle}</div>
-            <div className="foundationcard-name">Nama Yayasan</div>
+            <div className="foundationcard-name">{foundationName}</div>
             <div className="foundationcard-label">Dana Terkumpul</div>
             <div className="foundationcard-amount">Rp. {currentAmount.toLocaleString()}</div>
             <div className="progress-bar">

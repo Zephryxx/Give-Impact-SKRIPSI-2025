@@ -3,6 +3,8 @@ const mysql = require('mysql2/promise');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path')
 require('dotenv').config();
 
 const app = express();
@@ -11,6 +13,52 @@ const PORT = process.env.PORT || 8081;
 app.use(cors());
 app.use(express.json());
 
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token == null) {
+        return res.status(401).json({ message: "A token is required for authentication" });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({ message: "Token is not valid" });
+        }
+        req.user = user;
+        next();
+    });
+};
+
+//#region GET
+app.get('/', (req, res) => {
+    return res.json({ message: "From Backend Side" });
+});
+
+app.get('/users', async (req, res) => {
+    const sql = "SELECT User_ID, nama, email, tipe_akun, dibuat FROM `User`";
+                                                                            
+    try {
+        const [rows] = await db.query(sql);
+        res.json(rows);
+    } catch (err) {
+        console.error("Error fetching users:", err);
+        res.status(500).json({ message: "Failed to retrieve users from the database." });
+    }
+});
+
+const getFoundationIdByUserId = async (userId, connection) => {
+    const [foundations] = await connection.execute('SELECT Foundation_ID FROM foundation WHERE user_ID = ?', [userId]);
+
+    if (foundations.length === 0) {
+        throw new Error('Foundation profile not found for this user.');
+    }
+    
+    return foundations[0].Foundation_ID;
+};
+//#endregion
+
+//#region  DATABASE
 const db = mysql.createPool({
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || 'root',
@@ -30,22 +78,32 @@ db.getConnection()
         console.error('Error connecting to the database:', err);
     });
 
-app.get('/', (req, res) => {
-    return res.json({ message: "From Backend Side" });
-});
+//#endregion
 
-app.get('/users', async (req, res) => {
-    const sql = "SELECT User_ID, nama, email, tipe_akun, dibuat FROM `User`";
-                                                                            
-    try {
-        const [rows] = await db.query(sql);
-        res.json(rows);
-    } catch (err) {
-        console.error("Error fetching users:", err);
-        res.status(500).json({ message: "Failed to retrieve users from the database." });
+//#region MULTER
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/campaign_images/'); 
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
 
+const upload = multer({ 
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image file is allowed'), false);
+        }
+    }
+});
+//#endregion
+
+//#region REGISTER & LOGIN
 app.post('/api/register/donatur', async (req, res) => {
     const { nama, no_telp, email, password } = req.body;
 
@@ -92,7 +150,7 @@ app.post('/api/register/donatur', async (req, res) => {
             throw new Error('Failed to create user record.');
         }
 
-        const donorInsertQuery = 'INSERT INTO Donor (user_ID, no_telp, alamat) VALUES (?, ?, NULL)';
+        const donorInsertQuery = 'INSERT INTO Donor (user_ID, no_telp) VALUES (?, ?)';
         await connection.execute(donorInsertQuery, [newUserId, no_telp]);
 
         await connection.commit();
@@ -248,6 +306,63 @@ app.post('/api/login', async (req, res) => {
         if (connection) connection.release();
     }
 });
+//#endregion
+
+//#region FOUNDATION_MENU
+app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (req, res) => {
+
+    const { userId, tipe_akun } = req.user;
+    const { kategori, judul, penerima, deskripsi, rincian, target, tanggalMulai, tanggalBerakhir } = req.body;
+
+    if (tipe_akun !== 'Foundation') {
+        return res.status(403).json({ message: "Access denied: only foundation are allowed to create campaign." });
+    }
+    if (!req.file){
+        return res.status(400).json({ message: 'Banner photo must be uploaded' });
+    }
+    const namaFileGambar = req.file.filename;
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const foundation_ID = await getFoundationIdByUserId(userId, connection);
+        
+        const query = `
+            INSERT INTO kampanye (
+                foundation_ID, judul, jenis, nm_penetima, deksripsi, 
+                perincian, target_donasi, tgl_mulai, tgl_selesai, gambar
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        const values = [
+            foundation_ID, judul, kategori, penerima, deskripsi,
+            rincian, target, tanggalMulai, tanggalBerakhir, namaFileGambar
+        ];
+        
+        const [result] = await connection.execute(query, values);
+        
+        await connection.commit();
+
+        res.status(201).json({ 
+            message: "Campaign Succesfully created!",
+            kampanyeId: result.insertId
+        });
+
+    } catch (error) {
+        console.error("Error when creating campaign:", error);
+
+        if (connection) {
+            await connection.rollback();
+        }
+        res.status(500).json({ message: "Campaign was failed to create due to server error" });
+    } finally {
+        if (connection) {
+            connection.release();
+        }
+    }
+});
+//#endregion
 
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
