@@ -693,6 +693,7 @@ app.get('/api/foundation/my-campaigns', verifyToken, async (req, res) => {
                 k.tgl_selesai         AS enDate,
                 k.donasi_saat_ini     AS currentAmount,
                 k.target_donasi       AS targetAmount,
+                k.status,
                 (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID) AS donors 
             FROM Kampanye k
             JOIN Foundation f ON k.foundation_ID = f.Foundation_ID

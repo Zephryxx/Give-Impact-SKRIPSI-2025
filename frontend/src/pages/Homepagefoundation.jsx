@@ -67,6 +67,7 @@ function Homepagefoundation() {
                                 enDate={campaign.enDate}
                                 currentAmount={campaign.currentAmount}
                                 targetAmount={campaign.targetAmount}
+                                status={campaign.status}
                                 baseUrl="/donationcheck"
                             />
                         ))
