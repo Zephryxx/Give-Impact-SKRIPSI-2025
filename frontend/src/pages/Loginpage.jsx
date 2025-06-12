@@ -126,7 +126,7 @@ function Loginpage() {
             setResetMessage(data.message + " You can now log in.");
             setTimeout(() => {
                 setIsPopupOpen(false);
-            }, 500);
+            }, 1300);
 
         } catch (err) {
             console.error("Password reset submission failed:", err);
