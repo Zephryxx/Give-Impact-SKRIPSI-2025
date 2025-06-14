@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react';
 import '../styles/Buatkampanye.css'
 import Headeruser from '../components/Headeruser';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const kategoriOptions = ["Bencana Alam", "Pendidikan", "Kesehatan", "Lingkungan", "Sosial"];
@@ -30,18 +30,11 @@ const Buatkampanye = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const formatRupiah = (angka) => {
-        if (!angka) return '';
-        const number_string = angka.toString().replace(/[^,\d]/g, '').toString();
-        let sisa = number_string.length % 3;
-        let rupiah = number_string.substr(0, sisa);
-        const ribuan = number_string.substr(sisa).match(/\d{3}/gi);
-
-        if (ribuan) {
-            const separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
-        }
-
-        return rupiah ? 'Rp ' + rupiah : '';
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(angka);
     };
 
     const handleChange = (e) => {
@@ -72,6 +65,11 @@ const Buatkampanye = () => {
         setSuccessMessage('');
         setError('');
         
+        const token = authState.token;
+        if (!token) {
+            setError("Sesi telah berakhir. Silakan login kembali.");
+            return;
+        }
         
         const { kategori, judul, penerima, deskripsi, rincian, target, tanggalMulai, tanggalBerakhir, foto } = formData;
         const requiredFields = { kategori, judul, penerima, deskripsi, rincian, target, tanggalMulai, tanggalBerakhir, foto };
@@ -95,12 +93,6 @@ const Buatkampanye = () => {
         }
         if (target && parseInt(target) <= 0) {
             setError("Target donation must not be 0");
-            return;
-        }
-
-        const token = authState.token;
-        if (!token) {
-            setError("Sesi telah berakhir. Silakan login kembali.");
             return;
         }
         

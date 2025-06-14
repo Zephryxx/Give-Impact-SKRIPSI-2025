@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 8081;
 
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -56,6 +57,41 @@ const getFoundationIdByUserId = async (userId, connection) => {
     
     return foundations[0].Foundation_ID;
 };
+
+const getFoundationIdByKampanyeId = async (kampanyeId, connection) => {
+    const [foundations] = await connection.execute('SELECT Foundation_ID FROM kampanye WHERE Kampanye_ID = ?', [kampanyeId]);
+
+    if (foundations.length === 0) {
+        throw new Error('Foundation profile not found for this campaign.');
+    }
+    
+    return foundations[0].Foundation_ID;
+};
+
+const getDonorIdByUserId = async (userId, connection) => {
+    const [donors] = await connection.execute('SELECT donor_ID FROM donor WHERE user_ID = ?', [userId]);
+    
+    if (donors.length === 0) {
+        throw new Error('Donor tidak ditemukan untuk current user');
+    }
+
+    return donors[0].donor_ID;
+};
+
+const generatePaymentNo = (foundationId, kampanyeId) => {
+    const foundationIdPart = String(foundationId).padStart(3, '0');
+    const campaignIdPart = String(kampanyeId).padStart(3, '0');
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const datePart = `${year}${month}${day}`;
+    const randomPart = Math.floor(1000 + Math.random() * 9000);
+    
+    const code_transaksi = `${foundationIdPart}-INV${campaignIdPart}-${datePart}-${randomPart}`;
+
+    return code_transaksi;
+}
 //#endregion
 
 //#region  DATABASE
@@ -309,6 +345,7 @@ app.post('/api/login', async (req, res) => {
 //#endregion
 
 //#region FOUNDATION_MENU
+
 app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (req, res) => {
 
     const { userId, tipe_akun } = req.user;
@@ -362,42 +399,69 @@ app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (r
         }
     }
 });
+
+app.get('/api/kampanye/:id', async (req, res) => {
+    const { id } = req.params;
+
+    if (!id || isNaN(id)) {
+        return res.status(400).json({ message: "ID kampanye tidak valid." });
+    }
+
+    try {
+        const query = `
+            SELECT 
+                k.*, 
+                f.nama_foundation 
+            FROM kampanye k
+            JOIN foundation f ON k.foundation_ID = f.Foundation_ID
+            WHERE 
+                k.Kampanye_ID = ?
+        `;
+
+        const [campaigns] = await db.query(query, id);
+
+        if (campaigns.length === 0) {
+            return res.status(404).json({ message: "Kampanye tidak ditemukan." });
+        }
+
+        res.status(200).json(campaigns[0]);
+
+    } catch (error) {
+        console.error("Error mengambil detail kampanye:", error);
+        res.status(500).json({ message: "Gagal mengambil data kampanye karena kesalahan server." });
+    }
+});
 //#endregion
 
 //#region DONATUR_MENU
 app.post('/api/donate', authenticateToken, async (req, res) => {
     
     const { userId, tipe_akun } = req.user;
-    const { jumlah, pesan, tipe_pemb, kampanyeId, foundationId } = req.body; // kampanyeId & foundationId adalah placeholder
+    const { jumlah, pesan, tipe_pemb, provider, kampanyeId } = req.body; // kampanyeId & foundationId adalah placeholder
 
     if (tipe_akun !== 'Donatur') {
         return res.status(403).json({ message: "Akses ditolak: Hanya donatur yang dapat melakukan donasi." });
     }
-    if (!jumlah || jumlah <= 0 || !tipe_pemb || !kampanyeId || !foundationId) {
+    if (!jumlah || jumlah <= 0 || !tipe_pemb || !kampanyeId) {
         return res.status(400).json({ message: "Data tidak lengkap" });
     }
 
     let connection;
     try {
+        const int = 1;
         connection = await db.getConnection();
         await connection.beginTransaction();
 
-        const [donors] = await connection.execute('SELECT donor_ID FROM donor WHERE user_ID = ?', [userId]);
-        if (donors.length === 0) {
-            throw new Error('Donor tidak ditemukan untuk current user');
-        }
-        const donor_ID = donors[0].donor_ID;
-
-        // Untuk tipe pembayaran dan nomor rekening perlu dipertimbangkan mau hardcode atau DB
-        const provider = tipe_pemb.split(' ').pop(); // Mengambil kata terakhir, misal "BCA" dari "Transfer VA BCA"
-        const code_transaksi = 'INV' + Date.now(); // Membuat kode transaksi sederhana & unik
+        const foundation_ID = await getFoundationIdByKampanyeId(kampanyeId, connection);
+        const donor_ID = await getDonorIdByUserId(userId, connection);
+        const code_transaksi = await generatePaymentNo(foundation_ID, kampanyeId)
 
         const pembayaranQuery = `
             INSERT INTO pembayaran (donor_ID, foundation_ID, tipe_pemb, provider, code_transaksi)
             VALUES (?, ?, ?, ?, ?)
         `;
         const pembayaranValues = [
-            donor_ID, foundationId, tipe_pemb, provider, code_transaksi 
+            donor_ID, foundation_ID, tipe_pemb, provider, code_transaksi 
         ];
         const [pembayaranResult] = await connection.execute(pembayaranQuery, pembayaranValues);
         const newPembayaranId = pembayaranResult.insertId;
@@ -414,7 +478,7 @@ app.post('/api/donate', authenticateToken, async (req, res) => {
         await connection.commit();
 
         res.status(201).json({ 
-            message: "Donasi berhasil! Terima kasih atas kebaikan Anda.",
+            message: "Donasi berhasil! Terima kasih atas kebaikan Anda. (Mengarahkan kembali ke halaman sebelumnya...)",
             transactionCode: code_transaksi
         });
 
@@ -423,7 +487,9 @@ app.post('/api/donate', authenticateToken, async (req, res) => {
         if (connection) {
             await connection.rollback();
         }
-        res.status(500).json({ message: "Gagal memproses donasi karena kesalahan server." });
+        const status = error.statusCode || 500;
+        const message = error.message || "Gagal memproses donasi karena kesalahan server.";
+        res.status(status).json({ message });
     } finally {
         if (connection) {
             connection.release();
