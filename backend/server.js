@@ -11,8 +11,8 @@ const app = express();
 const PORT = process.env.PORT || 8081;
 
 app.use(cors());
-app.use(express.json());
-app.use('/uploads', express.static('uploads'));
+app.use(express.json());]
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));]
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -123,7 +123,7 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+        cb(null, 'gambar-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
 
@@ -135,6 +135,7 @@ const upload = multer({
         } else {
             cb(new Error('Only image file is allowed'), false);
         }
+        limits: { fileSize: 1024 * 1024 * 5 } 
     }
 });
 //#endregion
@@ -344,10 +345,9 @@ app.post('/api/login', async (req, res) => {
 });
 //#endregion
 
-//#region FOUNDATION_MENU
+//#region KAMPANYE-FOUNDATION
 
 app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (req, res) => {
-
     const { userId, tipe_akun } = req.user;
     const { kategori, judul, penerima, deskripsi, rincian, target, tanggalMulai, tanggalBerakhir } = req.body;
 
@@ -357,18 +357,23 @@ app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (r
     if (!req.file){
         return res.status(400).json({ message: 'Banner photo must be uploaded' });
     }
-    const namaFileGambar = req.file.filename;
+    const namaFileGambar = `uploads/campaign_images/${req.file.filename}`;
 
     let connection;
     try {
         connection = await db.getConnection();
         await connection.beginTransaction();
 
+        const [foundations] = await connection.execute('SELECT Foundation_ID FROM Foundation WHERE user_ID = ?', [userId]);
+        if (foundations.length === 0) {
+            return res.status(403).json({ message: 'You are not authorized to create a campaign.' });
+        }
+
         const foundation_ID = await getFoundationIdByUserId(userId, connection);
         
         const query = `
             INSERT INTO kampanye (
-                foundation_ID, judul, jenis, nm_penetima, deksripsi, 
+                foundation_ID, judul, jenis, nm_penerima, deskripsi, 
                 perincian, target_donasi, tgl_mulai, tgl_selesai, gambar
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
@@ -498,6 +503,7 @@ app.post('/api/donate', authenticateToken, async (req, res) => {
 });
 //#endregion
 
+//#region PASSWORD RESET
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -516,6 +522,82 @@ const verifyToken = (req, res, next) => {
     });
 };
 
+
+app.post('/api/password/check-email', async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ message: "Email is required." });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        const sql = 'SELECT User_ID FROM `User` WHERE email = ?';
+        const [users] = await connection.execute(sql, [email]);
+
+        if (users.length === 0) {
+            return res.status(404).json({ message: "No account found with that email address." });
+        }
+        res.json({ message: "Email confirmed. You can now reset your password." });
+
+    } catch (error) {
+        console.error("Error checking email:", error);
+        res.status(500).json({ message: "Server error while checking email." });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+app.put('/api/password/reset', async (req, res) => {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+        return res.status(400).json({ message: "Email and new password are required." });
+    }
+    if (newPassword.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters long." });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+
+        const findUserQuery = 'SELECT password FROM `User` WHERE email = ?';
+        const [users] = await connection.execute(findUserQuery, [email]);
+
+        if (users.length === 0) {
+            return res.status(404).json({ message: "No account found with that email address." });
+        }
+        
+        const currentHashedPassword = users[0].password;
+
+        const isSamePassword = await bcrypt.compare(newPassword, currentHashedPassword);
+        if (isSamePassword) {
+            return res.status(400).json({ message: "New password cannot be the same as the old password." });
+        }
+
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+        const sql = 'UPDATE `User` SET password = ? WHERE email = ?';
+        const [result] = await connection.execute(sql, [hashedPassword, email]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "No account found with that email address to update." });
+        }
+
+        res.json({ message: "Password has been reset successfully!" });
+
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        res.status(500).json({ message: "Server error while resetting password." });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+//#endregion
+
+//#region PROFILE
 app.get('/api/profile/donatur', verifyToken, async (req, res) => {
     const userId = req.user.userId;
 
@@ -678,7 +760,96 @@ app.put('/api/profile/foundation', verifyToken, async (req, res) => {
         if (connection) connection.release();
     }
 });
+//#endregion
 
+//#region HOMEPAGE
+app.get('/api/campaigns', async (req, res) => {
+    let connection;
+    try {
+        connection = await db.getConnection();
+        
+        const sql = `
+            SELECT 
+                k.Kampanye_ID         AS donationId,
+                k.gambar              AS donationImg,
+                k.judul               AS donationTitle,
+                f.nama_foundation     AS foundationName,
+                k.tgl_selesai         AS enDate,
+                k.donasi_saat_ini     AS currentAmount,
+                k.target_donasi       AS targetAmount,
+                k.jenis,
+                (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID) AS donors
+            FROM Kampanye k
+            JOIN Foundation f ON k.foundation_ID = f.Foundation_ID
+            WHERE k.status = 'Active' AND k.tgl_selesai > NOW()
+            ORDER BY RAND();
+        `;
+
+        const [campaigns] = await connection.execute(sql);
+
+        const campaignsWithFullUrls = campaigns.map(campaign => {
+            const imageUrl = campaign.donationImg ? `${req.protocol}://${req.get('host')}/${campaign.donationImg.replace(/\\/g, '/')}` : null;
+            return { ...campaign, donationImg: imageUrl };
+        });
+        
+        res.json(campaignsWithFullUrls);
+
+    } catch (error) {
+        console.error("Error fetching campaigns:", error);
+        res.status(500).json({ message: "Failed to retrieve campaign data." });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+app.get('/api/foundation/my-campaigns', verifyToken, async (req, res) => {
+    const loggedInUserId = req.user.userId;
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+
+        const updateExpiredSql = `
+            UPDATE Kampanye 
+            SET status = 'Inactive' 
+            WHERE status = 'Active' AND tgl_selesai <= NOW();
+        `;
+        await connection.execute(updateExpiredSql);
+        
+        const sql = `
+            SELECT 
+                k.Kampanye_ID         AS donationId,
+                k.gambar              AS donationImg,
+                k.judul               AS donationTitle,
+                f.nama_foundation     AS foundationName,
+                k.tgl_selesai         AS enDate,
+                k.donasi_saat_ini     AS currentAmount,
+                k.target_donasi       AS targetAmount,
+                k.status,
+                (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID) AS donors 
+            FROM Kampanye k
+            JOIN Foundation f ON k.foundation_ID = f.Foundation_ID
+            WHERE f.user_ID = ?  -- This is the crucial part that filters by the logged-in user
+            ORDER BY k.status, k.tgl_mulai DESC;
+        `;
+
+        const [campaigns] = await connection.execute(sql, [loggedInUserId]);
+
+        const campaignsWithFullUrls = campaigns.map(campaign => {
+            const imageUrl = campaign.donationImg ? `${req.protocol}://${req.get('host')}/${campaign.donationImg.replace(/\\/g, '/')}` : null;
+            return { ...campaign, donationImg: imageUrl };
+        });
+        
+        res.json(campaignsWithFullUrls);
+
+    } catch (error) {
+        console.error("Error fetching foundation's campaigns:", error);
+        res.status(500).json({ message: "Failed to retrieve your campaigns." });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+//#endregion
 
 app.listen(PORT, () => {
     console.log(`Server listening on port http://localhost:${PORT}`);

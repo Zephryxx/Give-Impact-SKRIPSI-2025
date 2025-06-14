@@ -1,11 +1,15 @@
 import React, {useState, useEffect, useContext } from 'react'
-import { AuthContext } from '../context/AuthContext'; 
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Profilefoundation.css'
 import Headeruser from '../components/Headeruser';
 function Profilefoundation() {
     
     const { authState } = useContext(AuthContext);
+    const navigate = useNavigate();
+
     const [profileData, setProfileData] = useState(null);
+    const [campaignHistory, setCampaignHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const providerOptions = ["BCA", "OVO", "DANA", "GOPAY", "Mandiri", "BNI"];
@@ -16,57 +20,57 @@ function Profilefoundation() {
     const [rekening, setRekening] = useState('-');
     const [provider, setProvider] = useState('');
 
-    const dummyData = [
-        {
-            nama: 'Bantu Pendidikan Anak Desa',
-            donasi: 'Rp. 12.500.000',
-            donatur: 145,
-            tanggal: '12 Juni 2025',
-            progress: 60,
-        },
-        {
-            nama: 'Dukung UMKM Lokal',
-            donasi: 'Rp. 7.200.000',
-            donatur: 88,
-            tanggal: '28 Mei 2025',
-            progress: 45,
-        },
-        {
-            nama: 'Bantuan Korban Banjir',
-            donasi: 'Rp. 20.000.000',
-            donatur: 210,
-            tanggal: '30 Juni 2025',
-            progress: 80,
-        },
-        {
-            nama: 'Renovasi Mushola Kampung',
-            donasi: 'Rp. 5.600.000',
-            donatur: 65,
-            tanggal: '15 Juli 2025',
-            progress: 30,
-        },
-        {
-            nama: 'Pembangunan Sumur Air Bersih',
-            donasi: 'Rp. 10.000.000',
-            donatur: 120,
-            tanggal: '10 Agustus 2025',
-            progress: 55,
-        },
-        {
-            nama: 'Sembako untuk Dhuafa',
-            donasi: 'Rp. 8.400.000',
-            donatur: 99,
-            tanggal: '20 Juni 2025',
-            progress: 40,
-        },
-        {
-            nama: 'Beasiswa Santri',
-            donasi: 'Rp. 15.750.000',
-            donatur: 160,
-            tanggal: '25 Juli 2025',
-            progress: 70,
-        },
-    ];
+    // const dummyData = [
+    //     {
+    //         nama: 'Bantu Pendidikan Anak Desa',
+    //         donasi: 'Rp. 12.500.000',
+    //         donatur: 145,
+    //         tanggal: '12 Juni 2025',
+    //         progress: 60,
+    //     },
+    //     {
+    //         nama: 'Dukung UMKM Lokal',
+    //         donasi: 'Rp. 7.200.000',
+    //         donatur: 88,
+    //         tanggal: '28 Mei 2025',
+    //         progress: 45,
+    //     },
+    //     {
+    //         nama: 'Bantuan Korban Banjir',
+    //         donasi: 'Rp. 20.000.000',
+    //         donatur: 210,
+    //         tanggal: '30 Juni 2025',
+    //         progress: 80,
+    //     },
+    //     {
+    //         nama: 'Renovasi Mushola Kampung',
+    //         donasi: 'Rp. 5.600.000',
+    //         donatur: 65,
+    //         tanggal: '15 Juli 2025',
+    //         progress: 30,
+    //     },
+    //     {
+    //         nama: 'Pembangunan Sumur Air Bersih',
+    //         donasi: 'Rp. 10.000.000',
+    //         donatur: 120,
+    //         tanggal: '10 Agustus 2025',
+    //         progress: 55,
+    //     },
+    //     {
+    //         nama: 'Sembako untuk Dhuafa',
+    //         donasi: 'Rp. 8.400.000',
+    //         donatur: 99,
+    //         tanggal: '20 Juni 2025',
+    //         progress: 40,
+    //     },
+    //     {
+    //         nama: 'Beasiswa Santri',
+    //         donasi: 'Rp. 15.750.000',
+    //         donatur: 160,
+    //         tanggal: '25 Juli 2025',
+    //         progress: 70,
+    //     },
+    // ];
 
     /* Pop Up Edit*/
     const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -74,27 +78,37 @@ function Profilefoundation() {
 
     useEffect(() => {
     
-        const fetchProfileData = async () => {
+        const fetchData = async () => {
             if (!authState.token) return;
             try {
-                const response = await fetch('http://localhost:8081/api/profile/foundation', {
-                    headers: { 'Authorization': `Bearer ${authState.token}` },
-                });
-                if (!response.ok) throw new Error('Failed to fetch profile.');
-                const data = await response.json();
-                setProfileData(data);
-                setEditData(data); 
+                const [profileResponse, campaignsResponse] = await Promise.all([
+                    fetch('http://localhost:8081/api/profile/foundation', {
+                        headers: { 'Authorization': `Bearer ${authState.token}` },
+                    }),
+                    fetch('http://localhost:8081/api/foundation/my-campaigns', {
+                        headers: { 'Authorization': `Bearer ${authState.token}` },
+                    })
+                ]);
+                if (!profileResponse.ok) throw new Error('Failed to fetch profile.');
+                if (!campaignsResponse.ok) throw new Error('Failed to fetch campaign history.');
+                const profile = await profileResponse.json();
+                const campaigns = await campaignsResponse.json();
 
-                if (!Array.isArray(data.rekening)) {
-                    data.rekening = [];
+                setProfileData(profile);
+                setEditData(profile);
+                setCampaignHistory(campaigns);
+
+                if (!Array.isArray(profile.rekening)) {
+                    profile.rekening = [];
                 }
+                
             } catch (err) {
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
-        fetchProfileData();
+        fetchData();
     }, [authState.token]);
 
     const handleOpenPopup = () => {
@@ -230,7 +244,7 @@ function Profilefoundation() {
 
                                 <div className="field-foundation">
                                     <label className='profile-label'>Jenis Provider:</label>
-                                    <select className='select-profile-foundation' value={selectedProvider} onChange={handleDisplayProviderChange} disabled>
+                                    <select className='select-profile-foundation' value={selectedProvider} onChange={handleDisplayProviderChange}>
                                         {providerOptions.map(provider => (
                                             <option key={provider} value={provider}>{provider}</option>
                                         ))}
@@ -335,27 +349,52 @@ function Profilefoundation() {
             <div className="history-section">
                 <h2 className="history-title">Riwayat</h2>
                 <div className="history-list">
-                    {dummyData.map((tx, index) => (
-                        
-                        <div key={index} className="history-card">
-                            {/* Kiri */}
-                            <div className="history-content">
-                                <div className="history-title">{tx.title}</div>
-                                <div className="history-label">Dana Terkumpul</div>
-                                <div className="history-amount">{tx.amount}</div>
-                                <div className="progress-bar">
-                                <div className="progress-fill" style={{ width: `${tx.progress}%` }}></div>
-                                </div>
-                                <div className="history-details">
-                                <span>{tx.donatur} Donatur</span>
-                                <span>Berakhir: <b>{tx.tanggal}</b></span>
-                                </div>
-                            </div>
+                    {campaignHistory.length > 0 ? (
+                        campaignHistory.map(campaign => {
+                            
+                            // --- Logic from HistoryCard is now directly inside the map ---
+                            const percentage = campaign.targetAmount > 0 ? Math.min((campaign.currentAmount / campaign.targetAmount) * 100, 100) : 0;
+                            const isFinished = campaign.status !== 'Active';
+                            let daysLeftText = '';
+                            if (!isFinished) {
+                                const today = new Date();
+                                const end = new Date(campaign.enDate);
+                                const timeDiff = end.getTime() - today.getTime();
+                                const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                                daysLeftText = days > 0 ? `Berakhir dalam: ${days} hari` : 'Kampanye sudah selesai';
+                            }
 
-                            {/* Kanan */}
-                                <div className="history-img"></div>
-                        </div>
-                    ))}
+                            return (
+                                <div 
+                                    key={campaign.donationId} 
+                                    className="history-card" 
+                                    onClick={() => navigate(`/donationcheck/${campaign.donationId}`)}
+                                >
+                                    {/* Left side */}
+                                    <div className="history-content">
+                                        <div className="history-title">{campaign.donationTitle}</div>
+                                        <div className="history-label">Dana Terkumpul</div>
+                                        <div className="history-amount">Rp {campaign.currentAmount.toLocaleString('id-ID')}</div>
+                                        <div className="progress-bar">
+                                            <div className="progress-fill" style={{ width: `${percentage}%` }}></div>
+                                        </div>
+                                        <div className="history-details">
+                                            <span>{campaign.donors} Donatur</span>
+                                            <span>
+                                                <b>{isFinished ? 'Kampanye sudah selesai' : daysLeftText}</b>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {/* Right side */}
+                                    <div className="history-img-container">
+                                        <img className="history-img" src={campaign.donationImg || 'https://placehold.co/150x150?text=Campaign'} alt={campaign.donationTitle} />
+                                    </div>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <p>Anda belum memiliki riwayat kampanye.</p>
+                    )}
                 </div>
             </div>
         </div>

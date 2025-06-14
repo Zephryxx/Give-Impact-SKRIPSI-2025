@@ -19,7 +19,7 @@ const Buatkampanye = () => {
         target: '',
         tanggalMulai: '',
         tanggalBerakhir: '',
-        foto: null,
+        gambar: null,
         previewImage: "",
 
     });
@@ -50,13 +50,13 @@ const Buatkampanye = () => {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file && file.type.startsWith('image/')) {
-            setFormData(prev => ({ ...prev, foto: file }));
+            setFormData(prev => ({ ...prev, gambar: file }));
             setPreviewImage(URL.createObjectURL(file));
             setError('');
         } else {
             setError('Please select a valid image file (jpg, png, etc).');
             setPreviewImage('');
-            setFormData(prev => ({ ...prev, foto: null }));
+            setFormData(prev => ({ ...prev, gambar: null }));
         }
     };
 
@@ -71,8 +71,8 @@ const Buatkampanye = () => {
             return;
         }
         
-        const { kategori, judul, penerima, deskripsi, rincian, target, tanggalMulai, tanggalBerakhir, foto } = formData;
-        const requiredFields = { kategori, judul, penerima, deskripsi, rincian, target, tanggalMulai, tanggalBerakhir, foto };
+        const { kategori, judul, penerima, deskripsi, rincian, target, tanggalMulai, tanggalBerakhir, gambar } = formData;
+        const requiredFields = { kategori, judul, penerima, deskripsi, rincian, target, tanggalMulai, tanggalBerakhir, gambar };
         
         if (Object.values(requiredFields).some(val => val === '' || val === null)) {
             setError("All Fields must be filled");
@@ -121,7 +121,7 @@ const Buatkampanye = () => {
             setSuccessMessage('Campaign succesfully created!');
             setFormData({
                 kategori: '', judul: '', penerima: '', deskripsi: '', rincian: '',
-                target: '', tanggalMulai: '', tanggalBerakhir: '', foto: null,
+                target: '', tanggalMulai: '', tanggalBerakhir: '', gambar: null,
             });
             setPreviewImage('');
             setTimeout(() => {
@@ -205,9 +205,9 @@ const Buatkampanye = () => {
                 </div>
 
                 <label className='label-buatkampanye'>Foto Banner
-                    {!formData.foto && <span style={{ color: 'red' }}> *</span>}
+                    {!formData.gambar && <span style={{ color: 'red' }}> *</span>}
                 </label>
-                <input className='input-buatkampanye' type="file" name="foto" accept="image/*" onChange={handleImageChange} required />
+                <input className='input-buatkampanye' type="file" name="gambar" accept="image/*" onChange={handleImageChange} required />
                 
                 {formData.previewImage && (
                     <img

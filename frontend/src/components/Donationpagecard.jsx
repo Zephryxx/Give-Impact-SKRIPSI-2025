@@ -3,7 +3,7 @@ import "../styles/Donationpagecard.css"
 
 const Donationpagecard = ({ campaign }) => {
   
-  const percentage = Math.min((campaign.amount / campaign.target) * 100, 100);
+  const percentage = campaign.target > 0 ? Math.min((campaign.amount / campaign.target) * 100, 100) : 0;
 
   return (
     <div className="donasipage-card">
@@ -22,7 +22,7 @@ const Donationpagecard = ({ campaign }) => {
 
       <div className="donasi-bottom">
         <span>Rp. {campaign.amount.toLocaleString("id-ID")}</span>
-        <span>{campaign.date}</span>
+        <span>Berakhir pada: {new Date(campaign.date).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
       </div>
     </div>
   );
