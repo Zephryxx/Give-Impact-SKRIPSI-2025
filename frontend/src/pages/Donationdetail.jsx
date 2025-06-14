@@ -1,65 +1,160 @@
-import React from 'react';
-import '../styles/Donationdetail.css';
+import '../styles/Kampanyedetail.css'; 
 import Headeruser from '../components/Headeruser';
-import { useNavigate } from 'react-router-dom';
-import banjir from '../img/img_bantuan_korban_banjir.jpeg'
-const DonationDetail = () => {
-  const navigate = useNavigate();
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
-  return (
-    <div className="donation-page">
-      {/* Header */}
-      <Headeruser/>
-
-      {/* Main Content */}
-      <div className="main-content">
-        <div className="card">
-          <img className="image-placeholder" src= {banjir} alt=''/>
-
-          <h3 className="donationdetail-title">Judul Donasi</h3>
-
-          <div className="donation-info">
-            <div>
-              <div className='donation-info-subtxt'>Nama Yayasan</div>
-              <div className="sub-info">Jumlah donatur</div>
-            </div>
-            <div>
-              <div className='donation-info-subtxt'>Nama Penerima</div>
-              <div className="sub-info">Waktu Mulai</div>
-            </div>
-            <div>
-              <div className='donation-info-subtxt'>Kategori Donasi</div>
-              <div className="sub-info">Waktu Berakhir</div>
-            </div>
-          </div>
-
-          <div className="progress-bar-container">
-            <div className="progress-bar">
-              <div className="progress-bar-fill" />
-            </div>
-            <div className="progress-text">
-              <span>Uang Terkumpul</span>
-              <span>Target Uang</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="section">
-          <label>Deskripsi penerima donasi</label>
-          <textarea className="textarea" readOnly placeholder="Deskripsi..." value={"korban bencana alam sangat meresahkan"} />
-        </div>
-
-        <div className="section">
-          <label>Rincian Dana</label>
-          <textarea className="textarea" readOnly placeholder="Rincian dana..." value={"Transportasi umum, membeli kebutuhan sandang dan pangan, perawatan bila ada yang mengalami luka"} />
-        </div>
-
-        <div className="button-container" onClick={() => navigate('/payment')}>
-          <button className="donate-button">Donasi Sekarang</button>
-        </div>
-      </div>
-    </div>
-  );
+const formatRupiah = (angka) => {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency', currency: 'IDR', minimumFractionDigits: 0
+    }).format(angka);
 };
+
+function DonationDetail() {
+    const { id } = useParams();
+    const { authState } = useContext(AuthContext);
+
+    const navigate = useNavigate();
+
+    const [campaign, setCampaign] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+      if (authState.isAuthenticated && authState.user.tipe_akun !== 'Donatur') {
+          setError('Akses ditolak. Halaman ini hanya untuk Donatur.');
+          setLoading(false);
+          return;
+      }
+
+      if (!id) {
+          setLoading(false);
+          setError("ID Kampanye tidak ditemukan di URL.");
+          return;
+      }
+
+      const fetchCampaignDetail = async () => {
+          try {
+              // Gunakan 'id' yang didapat dari useParams untuk fetch ke backend
+              const response = await fetch(`http://localhost:8081/api/kampanye/${id}`);
+
+              if (!response.ok) {
+                  const errorData = await response.json();
+                  throw new Error(errorData.message || 'Gagal memuat data kampanye.');
+              }
+
+              const data = await response.json();
+              setCampaign(data);
+          }
+          catch (err) {
+              setError(err.message);
+          }
+          finally {
+              setLoading(false);
+          }
+      };
+
+      fetchCampaignDetail();
+    }, [id,authState]);
+    
+    const handleDonateClick = () => {
+        const token = authState.token;
+        if (!token) {
+            setError("Sesi telah berakhir. Silakan login kembali.");
+            return;
+        }
+
+        if (campaign) {
+            navigate(`/payment/${campaign.Kampanye_ID}`);
+        }
+    };
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+    if (!campaign) return <div>Kampanye tidak ditemukan.</div>;
+
+    const progressPercentage = (campaign.donasi_saat_ini / campaign.target_donasi) * 100;
+
+    const renderDonateButton = () => {
+        const isCampaignEnded = new Date() > new Date(campaign.tgl_selesai);
+        if (isCampaignEnded) {
+            return <button className="donate-button" disabled>Kampanye Telah Berakhir</button>;
+        }
+        if (authState.isAuthenticated && authState.user.tipe_akun === 'Foundation') {
+            return null;
+        }
+        return (
+            <button className="donate-button" onClick={handleDonateClick}>
+                {authState.isAuthenticated ? 'Donasi Sekarang' : 'Login untuk Donasi'}
+            </button>
+        );
+    };
+
+    return (
+        <div className="kampanyedetail-container">
+            <Headeruser/>
+            <main className="kampanyedetail-content">
+                <img 
+                    src={`http://localhost:8081/uploads/campaign_images/${campaign.gambar}`} 
+                    alt={campaign.judul}
+                    className="kampanyedetail-image" 
+                />
+                <h1 className="kampanyedetail-title">{campaign.judul}</h1>
+                
+                <div className="kampanyedetail-info-grid">
+                    <div className="info-item">
+                        <span className="info-label">Nama Yayasan</span>
+                        <strong className="info-value">{campaign.nama_foundation}</strong>
+                    </div>
+                    <div className="info-item">
+                        <span className="info-label">Nama Penerima</span>
+                        <strong className="info-value">{campaign.nm_penerima || campaign.nm_penetima}</strong>
+                    </div>
+                    <div className="info-item">
+                        <span className="info-label">Kategori Donasi</span>
+                        <strong className="info-value">{campaign.jenis}</strong>
+                    </div>
+                    <div className="info-item">
+                        <span className="info-label">Jumlah Donatur</span>
+                        <strong className="info-value">12 Donatur</strong> {/* Placeholder */}
+                    </div>
+                    <div className="info-item">
+                        <span className="info-label">Waktu Mulai</span>
+                        <strong className="info-value">{new Date(campaign.tgl_mulai).toLocaleDateString('id-ID')}</strong>
+                    </div>
+                    <div className="info-item">
+                        <span className="info-label">Waktu Berakhir</span>
+                        <strong className="info-value">{new Date(campaign.tgl_selesai).toLocaleDateString('id-ID')}</strong>
+                    </div>
+                </div>
+
+                <div className="progress-section">
+                    <div className="progress-labels">
+                        <span>{formatRupiah(campaign.donasi_saat_ini)}</span>
+                        <span>Target {formatRupiah(campaign.target_donasi)}</span>
+                    </div>
+                    <div className="progress-bar">
+                        <div className="progress-fill" style={{ width: `${progressPercentage}%` }} />
+                    </div>
+                </div>
+
+                <div className="donation-section">
+                    <label>Deskripsi penerima donasi</label>
+                    <p className='kampanyedetail-text'>{campaign.deskripsi || campaign.deksripsi}</p>
+                </div>
+
+                <div className="donation-section">
+                    <label>Rincian Penggunaan Dana</label>
+                    <p className='kampanyedetail-text'>{campaign.perincian}</p>
+                </div>
+
+                
+                <div className="donate-button-container">
+                    {renderDonateButton()}
+                </div>
+            </main>
+        </div>
+    );
+}
 
 export default DonationDetail;

@@ -32,7 +32,6 @@ function App() {
           <Route path='/home' element={<Homepage/>}></Route>
           <Route path='/artikel' element={<Artikelepage/>}></Route>
           <Route path='/donationpage' element={<Donationpage/>}></Route>
-          <Route path='/donationdetail' element={<DonationDetail/>}></Route>
           <Route 
             path='/home/foundation' 
             element={
@@ -42,7 +41,7 @@ function App() {
             } 
           />
           <Route 
-            path='/payment' 
+            path='/payment/:id' 
             element={
               <ProtectedRoute>
                 <Paymentpage />
@@ -82,14 +81,21 @@ function App() {
             }
           />
           <Route
-            path='/kampanyedetail'
+            path="/kampanyedetail/:id"
             element={
               <ProtectedRoute>
                 <Kampanyedetail/>
               </ProtectedRoute>
             }
           />
-
+          <Route
+            path='/donationdetail/:id'
+            element={
+              <ProtectedRoute>
+                <DonationDetail/>
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>
