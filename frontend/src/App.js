@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import {BrowserRouter as  Router, Routes, Route } from 'react-router-dom'
+import {BrowserRouter as  Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -25,12 +25,13 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path='/home' element={<Homepage />} />
+          <Route path='/' element={<Navigate to="/home" />} />
           <Route path='/login' element={<Loginpage/>}></Route>
-          <Route path='/' element={<Chooserole/>}></Route>
+          <Route path='/chooserole' element={<Chooserole/>}></Route>
           <Route path='/register/donatur' element={<Registerdonatur/>}></Route>
           <Route path='/register/foundation' element={<Registerfoundation/>}></Route>
-          <Route path='/home' element={<Homepage/>}></Route>
-          <Route path='/artikel' element={<Artikelepage/>}></Route>
+          <Route path='/artikel/:slug' element={<Artikelepage/>}></Route>
           <Route path='/donationpage' element={<Donationpage/>}></Route>
           <Route 
             path='/home/foundation' 
