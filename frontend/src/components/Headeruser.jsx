@@ -64,27 +64,24 @@ function Headeruser() {
 
     return (
         <div className="navbar">
-            
             <div className="navbar-title" onClick={handleTitleClick}>Give Impact</div>
-            <div className="navbar-buttons">
-                {isAuthenticated && (
-                    <>
-                        {user?.tipe_akun === 'Donatur' && (
-                             <span className="user type">Donatur</span>
-                        )}
-                        {user?.tipe_akun === 'Foundation' && (
-                            <span className="user type">Foundation</span>
-                        )}
-                    </>
+            
+            {/* Ubah .navbar-buttons menjadi .navbar-center */}
+            <div className="navbar-center"> 
+                {isAuthenticated && user?.tipe_akun && (
+                    <span className="user-type">{user.tipe_akun}</span>
                 )}
             </div>
-            <div className="profile-icon-box">
+
+            {/* PERBAIKAN UTAMA: Bungkus semua elemen kanan dengan .navbar-right */}
+            <div className="navbar-right" ref={dropdownRef}>
                 {isAuthenticated ? (
-                    <div className="profile-icon-wrapper" ref={dropdownRef}>
-                        <div className="profile-icon" onClick={toggleDropdown}>
+                    <>
+                        {/* Pindahkan onClick dan SVG langsung ke dalam .profile-icon-box */}
+                        <div className="profile-icon-box" onClick={toggleDropdown}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                                <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                                <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
                             </svg>
                         </div>
 
@@ -92,11 +89,15 @@ function Headeruser() {
                             <div className="dropdown-menu-profile">
                                 <ul>
                                     <li>
-                                        <button className='dropdown-button info-akun-btn' onClick={handleEditProfile}>
+                                        <button className='dropdown-button' onClick={handleEditProfile}>
                                             Info Akun
                                         </button>
                                     </li>
                                     <li>
+                                        <hr /> {/* Pemisah visual */}
+                                    </li>
+                                    <li>
+                                        {/* Gunakan class 'logOut-btn' untuk styling khusus */}
                                         <button className="dropdown-button logOut-btn" onClick={handleLogout}>
                                             Log Out
                                         </button>
@@ -104,7 +105,7 @@ function Headeruser() {
                                 </ul>
                             </div>
                         )}
-                    </div>
+                    </>
                 ) : (
                     <button className="login-button-navbar" onClick={() => navigate('/login')}>
                         Login

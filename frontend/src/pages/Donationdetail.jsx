@@ -95,7 +95,7 @@ function DonationDetail() {
             <Headeruser/>
             <main className="kampanyedetail-content">
                 <img 
-                    src={`http://localhost:8081/uploads/campaign_images/${campaign.gambar}`} 
+                    src={`${campaign.gambar}`} 
                     alt={campaign.judul}
                     className="kampanyedetail-image" 
                 />

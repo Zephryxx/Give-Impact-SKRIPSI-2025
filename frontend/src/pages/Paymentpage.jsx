@@ -1,4 +1,4 @@
-import React,{useState, useContext} from 'react';
+import React,{useState, useEffect, useContext} from 'react';
 import '../styles/Paymentpage.css'
 import Headeruser from '../components/Headeruser';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -7,60 +7,85 @@ import { AuthContext } from '../context/AuthContext';
 const Paymentpage = () => {
     const { id } = useParams();
     const { authState } = useContext(AuthContext);
-    
     const navigate = useNavigate();
 
-    const [selectedAmount, setSelectedAmount] = useState('');
+    const [campaign, setCampaign] = useState(null);
+    const [paymentOptions, setPaymentOptions] = useState([]);
+
+    const [selectedAmount, setSelectedAmount] = useState(10000);
     const [customAmount, setCustomAmount] = useState('');
     const [prayer, setPrayer] = useState('');
-    const [paymentType, setPaymentType] = useState('Transfer VA BCA');
+    const [selectedProvider, setSelectedProvider] = useState('');
 
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     
-    if (!id) {
-        setIsLoading(false);
-        setError("ID Kampanye tidak ditemukan di URL.");
-        return;
-    }
+    useEffect(() => {
+        if (!id) {
+            setIsLoading(false);
+            setError("ID Kampanye tidak ditemukan di URL.");
+            return;
+        }
+
+        const fetchCampaignData = async () => {
+            try {
+                const response = await fetch(`http://localhost:8081/api/kampanye/${id}`);
+                if (!response.ok) {
+                    throw new Error('Gagal memuat detail kampanye.');
+                }
+                const data = await response.json();
+                setCampaign(data);
+
+                if (data.rekening && data.rekening.length > 0) {
+                    setPaymentOptions(data.rekening);
+                    setSelectedProvider(data.rekening[0].provider); // Set default ke provider pertama
+                } else {
+                    setError("Metode pembayaran untuk kampanye ini tidak tersedia.");
+                }
+
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCampaignData();
+    }, [id]);
 
     const formatRupiah = (angka) => {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-            }).format(angka);
-        };
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency', currency: 'IDR', minimumFractionDigits: 0
+        }).format(Number(angka) || 0);
+    };
+
+    const handleCustomAmountChange = (e) => {
+        const value = e.target.value.replace(/[^0-9]/g, '');
+        setCustomAmount(value);
+        setSelectedAmount('');
+    };
 
     const handleSelectAmount = (amount) => {
         setSelectedAmount(amount);
         setCustomAmount('');
     };
 
-    const handleCustomAmountChange = (e) => {
-        const value = e.target.value;
-        setCustomAmount(value);
-        setSelectedAmount(null);
-    };
-
     const getTotalAmount = () => {
-        return selectedAmount || parseInt(customAmount) || 0;
+        return selectedAmount || Number(customAmount) || 0;
     };
 
     const handleSubmit = async () => {
         setError('');
         setSuccessMessage('');
-
         const total = getTotalAmount();
-        if (total <= 0) {
-        alert('Mohon masukkan jumlah donasi.');
-        return;
-        }
 
-        const token = authState.token;
-        if (!token) {
-            setError("Sesi Anda telah berakhir. Silakan login kembali untuk berdonasi.");
+        if (total < 10000) {
+            setError('Jumlah donasi minimal adalah Rp 10.000.');
+            return;
+        }
+        if (!authState.token) {
+            setError("Sesi Anda telah berakhir. Silakan login kembali.");
             return;
         }
 
@@ -69,128 +94,131 @@ const Paymentpage = () => {
         const donationData = {
             jumlah: total,
             pesan: prayer,
-            tipe_pemb: paymentType,
-            provider: '',
+            tipe_pemb: selectedProvider,
+            provider: selectedProvider,
             kampanyeId: id
         };
 
         try {
-        const response = await fetch('http://localhost:8081/api/donate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(donationData)
-        });
+            const response = await fetch('http://localhost:8081/api/donate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authState.token}`
+                },
+                body: JSON.stringify(donationData)
+            });
 
-        const result = await response.json();
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || 'Gagal memproses donasi.');
 
-        if (!response.ok) {
-            throw new Error(result.message || 'Gagal memproses donasi.');
-        }
-
-        setSuccessMessage(result.message);
-        setSelectedAmount('');
-        setCustomAmount('');
-        setPrayer('');
-        
-        
+            setSuccessMessage(result.message);
             setTimeout(() => {
-                    navigate(`/donationdetail/${id}`);
-                }, 2000);
+                navigate(`/donationdetail/${id}`);
+            }, 2500);
 
         } catch (err) {
-            setError(err.message || "Gagal terhubung ke server. Silakan coba lagi.");
+            setError(err.message || "Gagal terhubung ke server.");
         } finally {
             setIsLoading(false);
         }
     };
 
-    const getVirtualAccount = () => {
-            switch (paymentType) {
-                case 'Transfer VA BCA': return { bank: 'Virtual Account BCA', account: '081837502273' };
-                case 'Transfer VA BNI': return { bank: 'Virtual Account BNI', account: '081837509999' };
-                case 'Transfer VA Mandiri': return { bank: 'Virtual Account Mandiri', account: '081837508888' };
-                default: return { bank: '-', account: '-' };
-            }
-        };
+    const selectedAccount = paymentOptions.find(opt => opt.provider === selectedProvider);
 
-    const va = getVirtualAccount();
+    if (isLoading) return <div>Memuat halaman pembayaran...</div>;
+    if (error && !campaign) return <div>Error: {error}</div>
 
     return (
         <div className="payment-page">
-            <Headeruser/>
+            <Headeruser />
             <main className="payment-content">
+                <div className="payment-header">
+                    <h1>{campaign?.judul || 'Halaman Pembayaran'}</h1>
+                    <p>Terima kasih telah memilih untuk berdonasi. Setiap kontribusi Anda sangat berarti.</p>
+                </div>
+
                 <div className="payment-grid">
-                    <section className="box box-nominal">
-                        <label className="section-title">Nominal Donasi</label>
-                        <div className="donation-amounts">
-                            {[10000, 30000, 50000, 100000].map((amount) => (
-                                <button
-                                    key={amount}
-                                    className={`amount-box ${selectedAmount === amount ? 'selected' : ''}`}
-                                    onClick={() => handleSelectAmount(amount)}
-                                >
-                                    {formatRupiah(amount).replace('Rp ', '')}
-                                </button>
-                            ))}
+                    {/* Kolom Kiri */}
+                    <div className="payment-form">
+                        <div className="box">
+                            <label className="section-title">1. Pilih Nominal Donasi</label>
+                            <div className="donation-amounts">
+                                {[10000, 30000, 50000, 100000].map((amount) => (
+                                    <button
+                                        key={amount}
+                                        className={`amount-box ${selectedAmount === amount ? 'selected' : ''}`}
+                                        onClick={() => handleSelectAmount(amount)}
+                                    >
+                                        {formatRupiah(amount)}
+                                    </button>
+                                ))}
+                            </div>
+                            <label className='label-info'>Atau masukkan nominal lain</label>
+                            <div className="custom-donation-input">
+                                <span>Rp</span>
+                                <input
+                                    type="text"
+                                    placeholder="20.000"
+                                    className="donation-input"
+                                    value={customAmount.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                                    onChange={handleCustomAmountChange}
+                                />
+                            </div>
                         </div>
-                        <div className="custom-donation-input">
-                            <label className='label-info'>Masukkan Donasi dana lainnya</label>
-                            <input
-                                type="text"
-                                placeholder="Contoh: 20000"
-                                className="donation-input"
-                                value={formatRupiah(customAmount)}
-                                onChange={handleCustomAmountChange}
-                            />
-                        </div>
-                        <div className="prayer-section">
-                            <label className='label-info'>Dukungan atau Doa (Opsional)</label>
+
+                        <div className="box">
+                            <label className="section-title">2. Dukungan atau Doa (Opsional)</label>
                             <textarea
                                 className="prayer-textarea"
-                                placeholder="Tuliskan doa atau dukunganmu..."
+                                placeholder="Tuliskan doa atau dukungan tulusmu di sini..."
                                 value={prayer}
                                 onChange={(e) => setPrayer(e.target.value)}
                             />
                         </div>
-                    </section>
-
-                    <div className="box box-tipe-pembayaran">
-                        <label className='label-info'>Tipe Pembayaran</label>
-                        <select
-                            className="payment-select"
-                            value={paymentType}
-                            onChange={(e) => setPaymentType(e.target.value)}
-                        >
-                            <option>Transfer VA BCA</option>
-                            <option>Transfer VA BNI</option>
-                            <option>Transfer VA Mandiri</option>
-                        </select>
-                    </div>
-                    <div className="box box-va">
-                        <label className='label-info'>Rekening Penerima Donasi</label>
-                        <strong>{va.bank}</strong>
-                        <h3>{va.account}</h3>
                     </div>
 
-                    <div className="box box-total-pembayaran" style={{ gridColumn: 'span 2' }}>
-                        <label className='label-info'>Total Pembayaran</label>
-                        <input
-                            type="text"
-                            readOnly
-                            className="total-input"
-                            value={formatRupiah(getTotalAmount())}
-                        />
-                    </div>
-
-                    <div className="pay-button-container">
+                    {/* Kolom Kanan */}
+                    <div className="payment-summary">
+                        <div className="box">
+                            <label className="section-title">3. Pilih Metode Pembayaran</label>
+                            <select
+                                className="payment-select"
+                                value={selectedProvider}
+                                onChange={(e) => setSelectedProvider(e.target.value)}
+                                disabled={paymentOptions.length === 0}
+                            >
+                                {paymentOptions.length > 0 ? (
+                                    paymentOptions.map(opt => (
+                                        <option key={opt.provider} value={opt.provider}>
+                                            {opt.provider}
+                                        </option>
+                                    ))
+                                ) : (
+                                    <option>Tidak ada pilihan</option>
+                                )}
+                            </select>
+                        </div>
+                        <div className="box box-va">
+                            <label className='label-info'>Silakan transfer ke rekening berikut:</label>
+                            <strong>{selectedAccount?.provider || 'Bank'}</strong>
+                            <div className='va-account-number'>
+                                <h3>{selectedAccount?.number || 'Nomor rekening tidak tersedia'}</h3>
+                            </div>
+                            <span>A/N: {campaign?.nama_foundation || 'Nama Yayasan'}</span>
+                        </div>
+                        
+                        <div className="box total-box">
+                            <div>
+                                <label className='label-info'>Total Donasi</label>
+                                <span className="total-amount">{formatRupiah(getTotalAmount())}</span>
+                            </div>
+                            <button className="pay-button" onClick={handleSubmit} disabled={isLoading || getTotalAmount() < 10000}>
+                                {isLoading ? 'Memproses...' : `Donasi Sekarang`}
+                            </button>
+                        </div>
                         {error && <p className="error-message">{error}</p>}
                         {successMessage && <p className="success-message">{successMessage}</p>}
-                        <button className="pay-button" onClick={handleSubmit} disabled={isLoading}>
-                            {isLoading ? 'Memproses...' : 'Bayar'}
-                        </button>
                     </div>
                 </div>
             </main>

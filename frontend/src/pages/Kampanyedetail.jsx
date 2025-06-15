@@ -5,6 +5,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const formatRupiah = (angka) => {
+    if (typeof angka !== 'number') {
+        angka = Number(angka) || 0;
+    }
     return new Intl.NumberFormat('id-ID', {
         style: 'currency', currency: 'IDR', minimumFractionDigits: 0
     }).format(angka);
@@ -68,7 +71,7 @@ function Kampanyedetail() {
             <Headeruser/>
             <main className="kampanyedetail-content">
                 <img 
-                    src={`http://localhost:8081/uploads/campaign_images/${campaign.gambar}`} 
+                    src={`${campaign.gambar}`} 
                     alt={campaign.judul}
                     className="kampanyedetail-image" 
                 />

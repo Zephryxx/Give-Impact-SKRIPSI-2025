@@ -14,19 +14,20 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-const authenticateToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
     if (token == null) {
-        return res.status(401).json({ message: "A token is required for authentication" });
+        return res.sendStatus(401);
     }
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
-            return res.status(403).json({ message: "Token is not valid" });
+            console.error("Token verification error:", err.message);
+            return res.sendStatus(403);
         }
-        req.user = user;
+        req.user = user; 
         next();
     });
 };
@@ -122,8 +123,11 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/campaign_images/'); 
     },
     filename: function (req, file, cb) {
+        const fileExtension = path.extname(file.originalname); 
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, 'gambar-' + uniqueSuffix + path.extname(file.originalname));
+        const newFilename = 'gambar-' + uniqueSuffix + fileExtension;
+        console.log(`Generated filename: ${newFilename}`);
+        cb(null, newFilename);
     }
 });
 
@@ -135,8 +139,8 @@ const upload = multer({
         } else {
             cb(new Error('Only image file is allowed'), false);
         }
-        limits: { fileSize: 1024 * 1024 * 5 } 
-    }
+    },
+    limits: { fileSize: 1024 * 1024 * 5 } 
 });
 //#endregion
 
@@ -347,7 +351,7 @@ app.post('/api/login', async (req, res) => {
 
 //#region KAMPANYE-FOUNDATION
 
-app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (req, res) => {
+app.post('/api/buatkampanye', verifyToken, upload.single('gambar'), async (req, res) => {
     const { userId, tipe_akun } = req.user;
     const { kategori, judul, penerima, deskripsi, rincian, target, tanggalMulai, tanggalBerakhir } = req.body;
 
@@ -357,7 +361,7 @@ app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (r
     if (!req.file){
         return res.status(400).json({ message: 'Banner photo must be uploaded' });
     }
-    const namaFileGambar = `uploads/campaign_images/${req.file.filename}`;
+    const namaFileGambar = req.file.filename;
 
     let connection;
     try {
@@ -373,7 +377,7 @@ app.post('/api/buatkampanye', authenticateToken, upload.single('foto'), async (r
         
         const query = `
             INSERT INTO kampanye (
-                foundation_ID, judul, jenis, nm_penerima, deskripsi, 
+                foundation_ID, judul, jenis, nm_penetima, deksripsi, 
                 perincian, target_donasi, tgl_mulai, tgl_selesai, gambar
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
@@ -416,7 +420,8 @@ app.get('/api/kampanye/:id', async (req, res) => {
         const query = `
             SELECT 
                 k.*, 
-                f.nama_foundation 
+                f.nama_foundation,
+              f.rekening 
             FROM kampanye k
             JOIN foundation f ON k.foundation_ID = f.Foundation_ID
             WHERE 
@@ -429,17 +434,132 @@ app.get('/api/kampanye/:id', async (req, res) => {
             return res.status(404).json({ message: "Kampanye tidak ditemukan." });
         }
 
-        res.status(200).json(campaigns[0]);
+        const campaign = campaigns[0];
+
+        try {
+            campaign.rekening = JSON.parse(campaign.rekening || '[]');
+            if (!Array.isArray(campaign.rekening)) {
+                campaign.rekening = [];
+            }
+        } catch (e) {
+            console.error("Gagal parse JSON rekening, akan dijadikan array kosong. Error:", e);
+            campaign.rekening = [];
+        }
+
+        if (campaign.gambar) {
+            campaign.gambar = `${req.protocol}://${req.get('host')}/uploads/campaign_images/${campaign.gambar}`;
+        }
+    
+        res.status(200).json(campaign);
 
     } catch (error) {
         console.error("Error mengambil detail kampanye:", error);
         res.status(500).json({ message: "Gagal mengambil data kampanye karena kesalahan server." });
     }
 });
+
+app.get('/api/campaigns/:id/pending-donations', verifyToken, async (req, res) => {
+    const { id: kampanyeId } = req.params;
+    const { userId, tipe_akun } = req.user;
+
+    if (tipe_akun !== 'Foundation') {
+        return res.status(403).json({ message: "Akses ditolak. Hanya untuk yayasan." });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+
+        const [campaigns] = await connection.execute(
+            'SELECT f.user_ID FROM Kampanye k JOIN Foundation f ON k.foundation_ID = f.Foundation_ID WHERE k.Kampanye_ID = ?',
+            [kampanyeId]
+        );
+
+        if (campaigns.length === 0 || campaigns[0].user_ID !== userId) {
+            connection.release();
+            return res.status(403).json({ message: "Akses ditolak: Anda bukan pemilik kampanye ini." });
+        }
+
+        const sql = `
+            SELECT
+                d.Donasi_ID,
+                d.kampanye_ID,
+                u.nama AS donorName,
+                p.provider AS paymentMethod,
+                p.code_transaksi AS transactionCode,
+                d.jumlah,
+                d.tgl_donasi,
+                d.status
+            FROM Donasi d
+            JOIN Donor dn ON d.donor_ID = dn.Donor_ID
+            JOIN User u ON dn.user_ID = u.user_ID
+            JOIN Pembayaran p ON d.pembayaran_ID = p.pembayaran_ID
+            WHERE d.kampanye_ID = ? AND d.status = 'Pending'
+            ORDER BY d.tgl_donasi ASC;
+        `;
+
+        const [pendingDonations] = await connection.execute(sql, [kampanyeId]);
+        connection.release();
+
+        res.json(pendingDonations);
+
+    } catch (error) {
+        if (connection) connection.release();
+        console.error("Error fetching pending donations:", error);
+        res.status(500).json({ message: "Gagal mengambil data donasi dari server." });
+    }
+});
+
+app.post('/api/donations/update-status', verifyToken, async (req, res) => {
+    if (req.user.tipe_akun !== 'Foundation') {
+        return res.status(403).json({ message: 'Akses ditolak.' });
+    }
+
+    const { donationIds, newStatus, kampanyeId } = req.body;
+
+    if (!donationIds || !Array.isArray(donationIds) || donationIds.length === 0 || !newStatus || !['Success', 'Failed'].includes(newStatus) || !kampanyeId) {
+        return res.status(400).json({ message: 'Input tidak valid. Mohon periksa kembali data yang dikirim.' });
+    }
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const placeholders = donationIds.map(() => '?').join(',');
+
+        const updateStatusSql = `UPDATE Donasi SET status = ? WHERE Donasi_ID IN (${placeholders})`;
+        
+        await connection.execute(updateStatusSql, [newStatus, ...donationIds]);
+
+        if (newStatus === 'Success') {
+            const sumSql = `SELECT SUM(jumlah) as totalConfirmed FROM Donasi WHERE Donasi_ID IN (${placeholders})`;
+            
+            const [rows] = await connection.execute(sumSql, donationIds);
+            const totalConfirmedAmount = rows[0].totalConfirmed || 0;
+
+            const updateTotalSql = 'UPDATE Kampanye SET donasi_saat_ini = donasi_saat_ini + ? WHERE Kampanye_ID = ?';
+            await connection.execute(updateTotalSql, [totalConfirmedAmount, kampanyeId]);
+        }
+
+        await connection.commit();
+        connection.release();
+        
+        res.json({ message: `Status ${donationIds.length} donasi berhasil diubah menjadi ${newStatus}.` });
+
+    } catch (error) {
+        if (connection) {
+            await connection.rollback();
+            connection.release();
+        }
+        console.error("Error updating donation status:", error);
+        res.status(500).json({ message: 'Gagal memperbarui status donasi karena kesalahan server.' });
+    }
+});
 //#endregion
 
 //#region DONATUR_MENU
-app.post('/api/donate', authenticateToken, async (req, res) => {
+app.post('/api/donate', verifyToken, async (req, res) => {
     
     const { userId, tipe_akun } = req.user;
     const { jumlah, pesan, tipe_pemb, provider, kampanyeId } = req.body; // kampanyeId & foundationId adalah placeholder
@@ -501,28 +621,68 @@ app.post('/api/donate', authenticateToken, async (req, res) => {
         }
     }
 });
+
+app.get('/api/donations/my-history', verifyToken, async (req, res) => {
+    if (req.user.tipe_akun !== 'Donatur') {
+        return res.status(403).json({ message: "Akses ditolak." });
+    }
+
+    const { userId } = req.user;
+    const { status, sortBy } = req.query;
+
+    let connection;
+    try {
+        connection = await db.getConnection();
+
+        const [donorRows] = await connection.execute('SELECT Donor_ID FROM Donor WHERE user_ID = ?', [userId]);
+        if (donorRows.length === 0) {
+            return res.json([]);
+        }
+        const donorId = donorRows[0].Donor_ID;
+
+        let params = [donorId];
+        let sql = `
+            SELECT
+                d.jumlah,
+                d.tgl_donasi,
+                d.status,
+                k.kampanye_ID AS campaignId,
+                k.judul AS campaignTitle,
+                f.nama_foundation AS foundationName
+            FROM Donasi d
+            JOIN Kampanye k ON d.kampanye_ID = k.Kampanye_ID
+            JOIN Foundation f ON k.foundation_ID = f.Foundation_ID
+            WHERE d.donor_ID = ?
+        `;
+
+        if (status && ['Success', 'Pending', 'Failed'].includes(status)) {
+            sql += ' AND d.status = ?';
+            params.push(status);
+        }
+
+        const sortOptions = {
+            date_desc: 'd.tgl_donasi DESC',
+            date_asc: 'd.tgl_donasi ASC',
+            amount_desc: 'd.jumlah DESC',
+            amount_asc: 'd.jumlah ASC'
+        };
+
+        sql += ` ORDER BY ${sortOptions[sortBy] || sortOptions.date_desc}`;
+
+        const [transactions] = await connection.execute(sql, params);
+        connection.release();
+
+        res.json(transactions);
+
+    } catch (error) {
+        if (connection) connection.release();
+        console.error("Error fetching donor's transaction history:", error);
+        res.status(500).json({ message: "Gagal mengambil riwayat transaksi." });
+    }
+});
 //#endregion
 
 //#region PASSWORD RESET
-const verifyToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (token == null) {
-        return res.sendStatus(401);
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            console.error("Token verification error:", err.message);
-            return res.sendStatus(403);
-        }
-        req.user = user; 
-        next();
-    });
-};
-
-
 app.post('/api/password/check-email', async (req, res) => {
     const { email } = req.body;
     if (!email) {
@@ -767,7 +927,7 @@ app.get('/api/campaigns', async (req, res) => {
     let connection;
     try {
         connection = await db.getConnection();
-        
+
         const sql = `
             SELECT 
                 k.Kampanye_ID         AS donationId,
@@ -778,7 +938,7 @@ app.get('/api/campaigns', async (req, res) => {
                 k.donasi_saat_ini     AS currentAmount,
                 k.target_donasi       AS targetAmount,
                 k.jenis,
-                (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID) AS donors
+                (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID AND status = 'Success') AS donors
             FROM Kampanye k
             JOIN Foundation f ON k.foundation_ID = f.Foundation_ID
             WHERE k.status = 'Active' AND k.tgl_selesai > NOW()
@@ -788,10 +948,13 @@ app.get('/api/campaigns', async (req, res) => {
         const [campaigns] = await connection.execute(sql);
 
         const campaignsWithFullUrls = campaigns.map(campaign => {
-            const imageUrl = campaign.donationImg ? `${req.protocol}://${req.get('host')}/${campaign.donationImg.replace(/\\/g, '/')}` : null;
+            const imageUrl = campaign.donationImg 
+                ? `${req.protocol}://${req.get('host')}/uploads/campaign_images/${campaign.donationImg}`
+                : null;
+            
             return { ...campaign, donationImg: imageUrl };
         });
-        
+    
         res.json(campaignsWithFullUrls);
 
     } catch (error) {
@@ -826,7 +989,7 @@ app.get('/api/foundation/my-campaigns', verifyToken, async (req, res) => {
                 k.donasi_saat_ini     AS currentAmount,
                 k.target_donasi       AS targetAmount,
                 k.status,
-                (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID) AS donors 
+                (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID AND status = 'Success') AS donors 
             FROM Kampanye k
             JOIN Foundation f ON k.foundation_ID = f.Foundation_ID
             WHERE f.user_ID = ?  -- This is the crucial part that filters by the logged-in user
@@ -836,10 +999,13 @@ app.get('/api/foundation/my-campaigns', verifyToken, async (req, res) => {
         const [campaigns] = await connection.execute(sql, [loggedInUserId]);
 
         const campaignsWithFullUrls = campaigns.map(campaign => {
-            const imageUrl = campaign.donationImg ? `${req.protocol}://${req.get('host')}/${campaign.donationImg.replace(/\\/g, '/')}` : null;
+            const imageUrl = campaign.donationImg 
+                ? `${req.protocol}://${req.get('host')}/uploads/campaign_images/${campaign.donationImg}`
+                : null;
+            
             return { ...campaign, donationImg: imageUrl };
         });
-        
+    
         res.json(campaignsWithFullUrls);
 
     } catch (error) {

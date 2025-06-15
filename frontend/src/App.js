@@ -73,7 +73,7 @@ function App() {
             }
           />
           <Route
-            path='/donationcheck'
+            path='/donationcheck/:kampanyeId'
             element={
               <ProtectedRoute>
                 <Donationcheck/>

@@ -4,7 +4,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-const kategoriOptions = ["Bencana Alam", "Pendidikan", "Kesehatan", "Lingkungan", "Sosial"];
+const kategoriOptions = ["Bencana Alam", "Pendidikan", "Darurat", "Kesehatan", "Sosial"];
 
 const Buatkampanye = () => {
     const navigate = useNavigate();
