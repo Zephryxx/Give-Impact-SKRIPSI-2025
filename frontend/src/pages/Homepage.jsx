@@ -5,12 +5,11 @@ import DonationCard from "../components/Donationcard";
 import ops from '../img/images.jpeg'
 import banjir from '../img/img_bantuan_korban_banjir.jpeg'
 import kebakaran from '../img/kebakaran.jpeg'
-import gempa from '../img/img_bantuan_korban_gempa.jpeg'
-import longsor from "../img/longsor.jpeg"
-import bangunan from '../img/img_bantuan_donasi_pembangunan.jpeg'
 import { useNavigate } from 'react-router-dom';
-import "../styles/Homepage.css";
+import { articleData } from '../components/Articledata';
 import Foundationcard from '../components/Foundationcard';
+import { Link } from 'react-router-dom';
+import "../styles/Homepage.css";
 
 function Homepage (){
 
@@ -91,10 +90,21 @@ function Homepage (){
           <div className="article-box">
             <h2 className="section-title-card">Artikel</h2>
             <div className="card-container">
-              <ArticleCard articleImg={banjir} articleTitle="Perkembangan donasi banjir" articleDate={'02 - 10 - 2025'}/>
-              <ArticleCard articleImg={longsor} articleTitle="Perkembangan donasi Longsor" articleDate={'01 - 07 - 2025'}/>
-              <ArticleCard articleImg={gempa} articleTitle="Perkembangan donasi Gempa" articleDate={'27 - 10 - 2025'}/>
-            </div>
+                        {articleData.slice(0, 3).map(article => (
+                            <Link 
+                                to={`/artikel/${article.slug}`} 
+                                key={article.id} 
+                                className="article-card-link"
+                                replace
+                            >
+                                <ArticleCard 
+                                    articleImg={article.image} 
+                                    articleTitle={article.title} 
+                                    articleDate={article.date}
+                                />
+                            </Link>
+                        ))}
+                    </div>
           </div>
         </div>
       </div>

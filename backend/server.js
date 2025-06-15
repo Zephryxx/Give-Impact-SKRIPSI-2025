@@ -11,8 +11,8 @@ const app = express();
 const PORT = process.env.PORT || 8081;
 
 app.use(cors());
-app.use(express.json());]
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));]
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];

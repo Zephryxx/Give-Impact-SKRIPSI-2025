@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import gempa from '../img/img_bantuan_korban_gempa.jpeg'
 import banjir from '../img/img_bantuan_donasi_pembangunan.jpeg'
 import longsor from '../img/longsor.jpeg'
+
 const ArticleCard = ({articleImg, articleTitle, articleDate}) => {
 
   const navigate = useNavigate();
