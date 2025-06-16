@@ -79,7 +79,7 @@ const getDonorIdByUserId = async (userId, connection) => {
     return donors[0].donor_ID;
 };
 
-const generatePaymentNo = (foundationId, kampanyeId) => {
+const generatePaymentNo = async(foundationId, kampanyeId) => {
     const foundationIdPart = String(foundationId).padStart(3, '0');
     const campaignIdPart = String(kampanyeId).padStart(3, '0');
     const date = new Date();
