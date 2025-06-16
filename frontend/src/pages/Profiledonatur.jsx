@@ -149,17 +149,17 @@ function Profiledonatur() {
 
                             <div className="left-fields-donatur">
                                 <div className="field-donatur">
-                                    <label className='profile-label'>Username:</label>
+                                    <label className='profileDonatur-label'>Username:</label>
                                     <input className='input-profile-donatur' type="text" value={profileData.username} readOnly/>
                                 </div>
 
                                 <div className="field-donatur">
-                                    <label className='profile-label'>Email:</label>
+                                    <label className='profileDonatur-label'>Email:</label>
                                     <input className='input-profile-donatur' type="text" value={profileData.email} readOnly />
                                 </div>
 
                                 <div className="field-donatur">
-                                    <label className='profile-label'>No. Telpon:</label>
+                                    <label className='profileDonatur-label'>No. Telpon:</label>
                                     <input className='input-profile-donatur' type="text" value={profileData.no_telp} readOnly />
                                 </div>
                             </div>
@@ -238,8 +238,8 @@ function Profiledonatur() {
                 <div className="transaction-box">
                     <div className="transaction-header-row">
                         <div className="column" style={{flex: '1.5'}}>Jumlah</div>
-                        <div className="column" style={{flex: '3'}}>Kampanye</div>
-                        <div className="column" style={{flex: '1.5', justifyContent: 'flex-start'}}>Status</div>
+                        <div className="column" style={{flex: '3.3'}}>Kampanye</div>
+                        <div className="column" style={{flex: '1.3'}}>Status</div>
                         <div className="column" style={{flex: '1.5', textAlign: 'right'}}>Tanggal</div>
                     </div>
 
