@@ -377,7 +377,7 @@ app.post('/api/buatkampanye', verifyToken, upload.single('gambar'), async (req, 
         
         const query = `
             INSERT INTO kampanye (
-                foundation_ID, judul, jenis, nm_penetima, deksripsi, 
+                foundation_ID, judul, jenis, nm_penerima, deskripsi, 
                 perincian, target_donasi, tgl_mulai, tgl_selesai, gambar
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
