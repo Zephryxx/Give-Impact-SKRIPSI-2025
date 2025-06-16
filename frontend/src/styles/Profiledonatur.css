@@ -30,16 +30,19 @@
     font-size: 1.75rem;
     font-weight: 600;
     margin-bottom: 1rem;
+    margin-left: 5%;
     color: var(--text-primary);
 }
 
 .profile-box-donatur {
+    width: 60%;
     display: flex;
     gap: 2rem;
     align-items: center; 
     border: none;
     border-radius: var(--border-radius);
     padding: 2rem;
+    margin: auto;
     background-color: #ffffff;
     box-shadow: var(--card-shadow);
     position: relative;
@@ -51,6 +54,7 @@
     height: 8rem;
     color: var(--text-secondary);
     flex-shrink: 0;
+    margin-bottom: 5rem;
 }
 
 .profile-form {
@@ -67,15 +71,15 @@
     margin-bottom: 1rem;
 }
 
-.profile-label {
-    width: 100px;
-    font-weight: 500;
+.profileDonatur-label {
+    width: 15%;
+    font-weight: 700;
     color: var(--text-secondary);
     flex-shrink: 0;
 }
 
 .input-profile-donatur {
-    flex-grow: 1;
+    width: 550px;
     padding: 0.75rem;
     border: 1px solid var(--border-color);
     border-radius: 6px;
@@ -168,11 +172,11 @@
 .column {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .transaction-amount {
-    flex: 1.5;
+    flex: 1.47;
     font-weight: 600;
     font-size: 1.1rem;
 }
@@ -198,8 +202,6 @@
 
 .transaction-status {
     flex: 1.5;
-    display: flex;
-    justify-content: flex-start;
 }
 .transaction-date {
     flex: 1.5;
@@ -209,18 +211,19 @@
 
 /* === STATUS BADGES === */
 .status-pill {
-    padding: 0.25rem 0.75rem;
+    width: 30%;
+    padding: 0.25rem 2rem;
     border-radius: 9999px;
-    font-weight: 600;
-    font-size: 0.8rem;
-    display: inline-block;
+    font-weight: bold;
+    font-size: 0.9rem;
     text-align: center;
+
 }
 .status-Success, .status-diterima {
     color: var(--success-color);
     background-color: var(--light-green);
 }
-.status-Pending {
+.status-pending {
     color: #b79b00;
     background-color: var(--light-yellow);
 }

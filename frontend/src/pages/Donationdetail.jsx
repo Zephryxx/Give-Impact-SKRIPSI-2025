@@ -1,4 +1,4 @@
-import '../styles/Kampanyedetail.css'; 
+import '../styles/Donationdetail.css'; 
 import Headeruser from '../components/Headeruser';
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -95,8 +95,8 @@ function DonationDetail() {
                 />
                 <h1 className="kampanyedetail-title">{campaign.judul}</h1>
                 
-                <div className="kampanyedetail-info-grid">
-                    <div className="info-item">
+                <div className="donationdetail-info-grid">
+                    <div className="donation-info">
                         <span className="info-label">Nama Yayasan</span>
                         <strong className="info-value">{campaign.nama_foundation}</strong>
                     </div>
