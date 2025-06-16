@@ -205,7 +205,7 @@ function Loginpage() {
 
                 <div className='askTxt'>
                     Don't have an account yet?
-                    <Link to="/" className='greyText-signup'> Sign Up</Link> 
+                    <Link to="/chooserole" className='greyText-signup'> Sign Up</Link> 
                 </div>
             </div>
         </div>

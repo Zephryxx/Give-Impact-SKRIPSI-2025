@@ -31,9 +31,14 @@
     font-weight: 600;
 }
 
-.donation-info {
+.donationdetail-info-grid{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.donation-info {
+    display: flex;
+    flex-direction: column;
     text-align: center;
     margin-top: 0.5rem;
     font-size: 0.875rem;
@@ -46,7 +51,7 @@
 }
 
 .progress-bar-container {
-    margin-top: 1rem;
+    
 }
 
 .progress-bar {
