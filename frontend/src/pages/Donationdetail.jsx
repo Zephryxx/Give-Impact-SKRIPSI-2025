@@ -58,12 +58,6 @@ function DonationDetail() {
     }, [id,authState]);
     
     const handleDonateClick = () => {
-        const token = authState.token;
-        if (!token) {
-            setError("Sesi telah berakhir. Silakan login kembali.");
-            return;
-        }
-
         if (campaign) {
             navigate(`/payment/${campaign.Kampanye_ID}`);
         }

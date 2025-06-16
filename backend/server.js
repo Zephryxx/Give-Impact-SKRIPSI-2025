@@ -938,6 +938,7 @@ app.get('/api/campaigns', async (req, res) => {
                 k.donasi_saat_ini     AS currentAmount,
                 k.target_donasi       AS targetAmount,
                 k.jenis,
+                k.status,
                 (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID AND status = 'Success') AS donors
             FROM Kampanye k
             JOIN Foundation f ON k.foundation_ID = f.Foundation_ID
@@ -992,7 +993,7 @@ app.get('/api/foundation/my-campaigns', verifyToken, async (req, res) => {
                 (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID AND status = 'Success') AS donors 
             FROM Kampanye k
             JOIN Foundation f ON k.foundation_ID = f.Foundation_ID
-            WHERE f.user_ID = ?  -- This is the crucial part that filters by the logged-in user
+            WHERE f.user_ID = ?
             ORDER BY k.status, k.tgl_mulai DESC;
         `;
 

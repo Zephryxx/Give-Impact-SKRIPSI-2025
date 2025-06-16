@@ -33,6 +33,7 @@ function App() {
           <Route path='/register/foundation' element={<Registerfoundation/>}></Route>
           <Route path='/artikel/:slug' element={<Artikelepage/>}></Route>
           <Route path='/donationpage' element={<Donationpage/>}></Route>
+          <Route path='/donationdetail/:id'element={<DonationDetail/>}></Route>
           <Route 
             path='/home/foundation' 
             element={
@@ -86,14 +87,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <Kampanyedetail/>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/donationdetail/:id'
-            element={
-              <ProtectedRoute>
-                <DonationDetail/>
               </ProtectedRoute>
             }
           />
