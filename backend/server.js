@@ -97,10 +97,11 @@ const generatePaymentNo = async(foundationId, kampanyeId) => {
 
 //#region  DATABASE
 const db = mysql.createPool({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'giveimpact',
+    host: process.env.MYSQL_ADDON_HOST || 'bbqwyrobl7wq503eixq1-mysql.services.clever-cloud.com',       // <-- Pastikan menggunakan ini
+    user: process.env.MYSQL_ADDON_USER || 'u91ed5jri0olrhnq',       // <-- Pastikan menggunakan ini
+    password: process.env.MYSQL_ADDON_PASSWORD || 'xO1h7QTxJ5S9Bhn1zyps', // <-- Pastikan menggunakan ini
+    database: process.env.MYSQL_ADDON_DB || 'bbqwyrobl7wq503eixq1',     // <-- Pastikan menggunakan ini
+    port: process.env.MYSQL_ADDON_PORT || 3306,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0

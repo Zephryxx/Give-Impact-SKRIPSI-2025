@@ -16,8 +16,8 @@ function Homepage (){
     useEffect(() => {
         const fetchCampaigns = async () => {
             try {
-                // Fetch from the public, randomized endpoint
-                const response = await fetch('http://localhost:8081/api/campaigns');
+                const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await fetch(`${apiUrl}/api/campaigns`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch campaign data.');
                 }

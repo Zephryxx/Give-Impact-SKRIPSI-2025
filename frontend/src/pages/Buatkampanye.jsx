@@ -100,7 +100,8 @@ const Buatkampanye = () => {
         });
 
         try {
-            const response = await fetch('http://localhost:8081/api/buatkampanye', {
+            const apiUrl = process.env.;
+                const response = await fetch(`${apiUrl}/api/campaigns`); {
                 method: 'POST',
                 headers: {
                 'Authorization': `Bearer ${token}`

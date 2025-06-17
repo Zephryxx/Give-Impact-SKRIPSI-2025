@@ -89,7 +89,9 @@ const Donationcheck = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:8081/api/donations/update-status', {
+            
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await fetch(`${apiUrl}/api/donations/update-status`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
