@@ -35,8 +35,8 @@ function DonationDetail() {
 
       const fetchCampaignDetail = async () => {
           try {
-              // Gunakan 'id' yang didapat dari useParams untuk fetch ke backend
-              const response = await fetch(`http://localhost:8081/api/kampanye/${id}`);
+              const apiUrl = process.env.REACT_APP_API_URL;
+              const response = await fetch(`${apiUrl}/api/kampanye/${id}`);
 
               if (!response.ok) {
                   const errorData = await response.json();

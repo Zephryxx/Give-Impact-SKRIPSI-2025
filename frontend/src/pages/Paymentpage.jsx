@@ -43,7 +43,8 @@ const Paymentpage = () => {
 
         const fetchCampaignData = async () => {
             try {
-                const response = await fetch(`http://localhost:8081/api/kampanye/${id}`);
+                const apiUrl = process.env.REACT_APP_API_URL;
+                const response = await fetch(`${apiUrl}/api/kampanye/${id}`);
                 if (!response.ok) {
                     throw new Error('Gagal memuat detail kampanye.');
                 }

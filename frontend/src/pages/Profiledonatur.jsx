@@ -53,7 +53,8 @@ function Profiledonatur() {
                 ...(filterStatus !== 'all' && { status: filterStatus }),
                 sortBy: sortBy
             });
-            const url = `http://localhost:8081/api/donations/my-history?${queryParams}`;
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const url = `${apiUrl}/api/donations/my-history?${queryParams}`;
             
             const response = await fetch(url, {
                 headers: { 'Authorization': `Bearer ${authState.token}` }

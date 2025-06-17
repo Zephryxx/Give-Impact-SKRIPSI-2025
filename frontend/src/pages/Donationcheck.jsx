@@ -43,13 +43,13 @@ const Donationcheck = () => {
             if (!token) {
                 throw new Error("Sesi tidak valid. Silakan login kembali.");
             }
-            
-            const campaignRes = await fetch(`http://localhost:8081/api/kampanye/${kampanyeId}`);
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const campaignRes = await fetch(`${apiUrl}/api/kampanye/${kampanyeId}`);
             if (!campaignRes.ok) throw new Error('Gagal memuat detail kampanye.');
             const campaignData = await campaignRes.json();
             setCampaign(campaignData);
 
-            const pendingRes = await fetch(`http://localhost:8081/api/campaigns/${kampanyeId}/pending-donations`, {
+            const pendingRes = await fetch(`${apiUrl}/api/campaigns/${kampanyeId}/pending-donations`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -89,7 +89,7 @@ const Donationcheck = () => {
 
         try {
             const token = localStorage.getItem('token');
-            
+
             const apiUrl = process.env.REACT_APP_API_URL;
             const response = await fetch(`${apiUrl}/api/donations/update-status`, {
                 method: 'POST',

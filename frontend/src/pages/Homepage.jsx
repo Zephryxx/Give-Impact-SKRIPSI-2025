@@ -17,7 +17,7 @@ function Homepage (){
         const fetchCampaigns = async () => {
             try {
                 const apiUrl = process.env.REACT_APP_API_URL;
-            const response = await fetch(`${apiUrl}/api/campaigns`);
+                const response = await fetch(`${apiUrl}/api/campaigns`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch campaign data.');
                 }
