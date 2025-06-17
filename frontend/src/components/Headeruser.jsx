@@ -30,7 +30,7 @@ function Headeruser() {
     const handleLogout = () => {
         logout();
         setDropdownOpen(false);
-        navigate('/login');
+        navigate('/home');
     };
 
     const handleEditProfile = () => {
