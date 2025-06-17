@@ -1,0 +1,222 @@
+.login-container{
+    display: flex;
+    align-items: center; /* Pusat secara vertikal */
+    justify-content: center; /* Pusat secara horizontal */
+    min-height: 100vh;
+    background: linear-gradient(180deg, white, #74FFFF); /* Background gradasi */
+}
+  
+.wrapperLogin{
+    width: fit-content;
+    padding: 30px;
+    background-color: white;
+    border-radius: 25px;
+    text-align: center;
+    align-items: center;
+}
+  
+.login-title{
+    margin: 5px;
+}
+  
+.Logintext{
+    text-align: left;
+}
+  
+.greyText-signup{
+    font-size: 12px;
+    margin-left: 5px;
+}
+.greyText-signup:hover{
+    color: #FF9D00;
+    cursor: pointer;
+}
+.askTxt{
+    color: #7b7b7b;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    margin-top: 5%;
+    flex-direction: row;
+    font-size: 12px;
+}
+  
+.inputLogin{
+    width: 421px;
+    height: 38px;
+    border-radius: 25px;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+    border-style: none;
+    padding-left: 30px;
+    outline: 0;
+}
+  
+.inputPassword{
+    width: 421px;
+    height: 38px;
+    border-radius: 25px;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+    border-style: none;
+    padding-left: 30px;
+    outline: 0;
+}
+  
+.greyText{
+    width: 21%;
+    display: block;
+    font-size: 12px;
+    color: #7a7777;
+    text-decoration: none;
+    text-align: center;
+}
+  
+.greyText{
+    text-align: left;
+    margin-top: 1rem;
+    margin-right: 78%;
+}
+  
+.greyText:hover{
+    color: #FF9D00;
+    cursor: pointer;
+}
+  
+.login-button{
+    border-radius: 25px;
+    width: 184px;
+    height: 41px;
+    margin-top: 50px;
+    background-color: white;
+    font-weight: 600;
+    border-style: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+  
+.error-message {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+/*Pop Up */
+.popup-overlay-resetPassword{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.popup-content-resetPassword{
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    z-index: 1000; 
+    position: relative;
+    width: 400px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.form-resetPassword {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+.input-resetPassword {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 678px) {
+  .login-container {
+    padding: 1rem;
+    min-height: 100vh;
+  }
+
+  .wrapperLogin {
+    width: 100%;
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .inputLogin,
+  .inputPassword {
+    width: 90%;
+    height: 38px;
+    padding-left: 20px;
+    font-size: 14px;
+  }
+
+  .login-button {
+    width: 100%;
+    height: 41px;
+    margin-top: 1.5rem;
+    font-size: 14px;
+  }
+
+  .greyText {
+    width: 100%;
+    text-align: left;
+    margin-right: 0;
+    margin-top: 1rem;
+    font-size: 12px;
+  }
+
+  .askTxt {
+    flex-direction: column;
+    text-align: center;
+    font-size: 12px;
+    margin-top: 1rem;
+  }
+
+  .greyText-signup {
+    margin-left: 0;
+    margin-top: 0.25rem;
+    font-size: 12px;
+  }
+
+  .popup-content-resetPassword {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  .form-resetPassword {
+    gap: 10px;
+  }
+
+  .input-resetPassword {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .close-btn {
+    font-size: 20px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .error-message {
+    font-size: 13px;
+    margin-top: 0.75rem;
+  }
+}

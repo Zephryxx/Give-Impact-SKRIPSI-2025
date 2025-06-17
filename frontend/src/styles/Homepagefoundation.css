@@ -1,0 +1,45 @@
+.homepage-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+}
+  
+.homepage-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;     /* Batas lebar maksimum */
+  width: 100%;           /* Gunakan 100% dari layar hingga max-width */
+  margin: 0 auto;        /* Pusatkan horizontal */
+  padding: 1.5rem;       /* Jaga jarak dalam konten */
+  box-sizing: border-box;
+}
+
+.buatkampanye-button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 60px;
+  margin-left: 75%;
+  font-weight: bold;
+  border-radius: 7px;
+  box-shadow:  0 0.1rem 1rem 0 #D0CECE;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 678px) {
+  .homepage-content {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .buatkampanye-button {
+    width: 100%;
+    height: 50px;
+    margin: 0 auto; /* Posisikan tombol di tengah */
+    font-size: 1rem;
+    box-shadow: 0 0.1rem 0.75rem rgba(0, 0, 0, 0.1);
+  }
+}

@@ -1,0 +1,231 @@
+
+.donationcheck-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    /* padding: 2rem 1rem; */
+    box-sizing: border-box;
+}
+
+.kampanye-title {
+    font-size: 1.75rem;
+    color: #343a40;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.detaildonation-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #dee2e6;
+}
+.campaign-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #212529;
+    margin: 0;
+}
+
+.detail-button {
+    background-color: transparent;
+    color: #0d6efd;
+    border: none;
+    padding: 8px 0; 
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    width: fit-content;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.detail-button:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+.progress-section {
+    margin: 1.5rem 0;
+}
+
+.donationcheck-progress-bar {
+    height: 12px;
+    background: #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.donationcheck-progress-fill {
+    background-color: #198754;
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s ease-in-out;
+}
+
+.progress-goal {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+.donation-list {
+    margin-top: 1rem;
+}
+
+.donation-row {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.donation-row:hover {
+    background-color: #f1f3f5;
+}
+
+.donation-row.selected {
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+}
+
+.donation-info {
+    font-size: 0.9rem;
+    color: #495057;
+}
+.donation-info strong {
+    font-weight: 600;
+    color: #212529;
+}
+.donation-info small {
+    color: #6c757d;
+}
+
+.donation-amount {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #212529;
+}
+
+.donation-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.action-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.action-button:hover:not(:disabled) {
+    transform: translateY(-2px); 
+}
+
+.action-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.action-button:disabled {
+    background-color: #adb5bd;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.action-button.confirm {
+    background-color: #198754;
+    box-shadow: 0 2px 4px rgba(25, 135, 84, 0.3);
+}
+.action-button.confirm:hover:not(:disabled) {
+    background-color: #157347;
+}
+
+.action-button.reject {
+    background-color: #dc3545; 
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+.action-button.reject:hover:not(:disabled) {
+    background-color: #bb2d3b;
+}
+
+.action-message {
+    text-align: center;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+@media screen and (max-width: 678px) {
+  .detaildonation-card {
+    padding: 1.5rem;
+    width: 80%;
+  }
+
+  .campaign-amount {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .progress-goal {
+    text-align: center;
+  }
+
+  .donation-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .donation-amount {
+    font-size: 0.95rem;
+  }
+
+  .donation-checkbox {
+    align-self: flex-end;
+  }
+
+  .button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .action-button {
+    width: 100%;
+  }
+
+  .kampanye-title {
+    font-size: 1.5rem;
+    padding: 0 1rem;
+  }
+}
+

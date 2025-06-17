@@ -1,0 +1,76 @@
+.donasipage-card {
+    background-color: #fdf6f6;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+}
+  
+.donasipage-content {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.donasipage-image {
+    width: 200px;
+    height: 120px;
+    background-color: #ccc;
+    box-shadow: 0px 2px 15px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+.progress-container {
+    background-color: #ddd;
+    height: 6px;
+    border-radius: 3px;
+    margin: 10px 0;
+}
+
+.progress-fill {
+    width: 50%;
+    height: 100%;
+    background-color: #3b82f6; /* Tailwind blue-500 */
+}
+
+.donasi-bottom {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #333;
+}
+
+@media screen and (max-width: 678px) {
+  .donasipage-card {
+    padding: 15px;
+  }
+
+  .donasipage-content {
+    flex-direction: column; /* Stack image & text vertically */
+    align-items: center;
+    text-align: center;
+  }
+
+  .donasipage-image {
+    width: 100%;
+    height: 160px; /* Tambah tinggi agar tetap proporsional */
+  }
+
+  .progress-container {
+    height: 5px;
+    margin: 8px 0;
+  }
+
+  .progress-fill {
+    width: 50%;
+  }
+
+  .donasi-bottom {
+    flex-direction: column;
+    align-items: center;
+    font-size: 13px;
+    gap: 5px;
+    text-align: center;
+  }
+}

@@ -1,0 +1,104 @@
+.foundation-card {
+    border-radius: 0.75rem;
+    background-color: white;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 20rem;
+    cursor: pointer;
+}
+
+.foundationcard-image {
+    width: 100%;
+    height: 6rem;
+    background-color: #d1d5db;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+} 
+
+.foundationcard-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.foundationcard-name {
+    font-size: 0.875rem; /* text-sm */
+    color: #4b5563; /* gray-600 */
+    margin-bottom: 10px;
+
+}
+  
+.foundationcard-label {
+    font-size: 0.75rem; /* text-xs */
+    color: #6b7280; /* gray-500 */
+}
+  
+.foundationcard-amount {
+    font-size: 0.875rem;
+    color: #3b82f6; /* blue-500 */
+}
+
+.progress-bar {
+    height: 0.25rem;
+    background-color: #d1d5db;
+    border-radius: 9999px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+  
+.progress-fill {
+    width: 50%;
+    height: 100%;
+    background-color: #3b82f6; /* Tailwind blue-500 */
+}
+
+.foundationcard-donor-info {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+  
+.foundationcard-days-left {
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-align: right;
+}
+
+@media screen and (max-width: 678px) {
+  .foundation-card {
+    max-width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+  }
+
+  .foundationcard-image {
+    height: 5rem;
+  }
+
+  .foundationcard-title {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .foundationcard-name {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+
+  .foundationcard-label,
+  .foundationcard-amount,
+  .foundationcard-donor-info,
+  .foundationcard-days-left {
+    font-size: 0.7rem;
+  }
+
+  .foundationcard-days-left {
+    text-align: left; /* supaya sejajar saat space terbatas */
+    margin-top: 0.25rem;
+  }
+
+  .progress-bar {
+    height: 0.2rem;
+    margin: 0.4rem 0;
+  }
+}

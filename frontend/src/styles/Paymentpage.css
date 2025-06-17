@@ -1,0 +1,297 @@
+/* Menggunakan variabel global yang sama */
+:root {
+    --primary-color: #4F46E5;
+    --primary-hover: #4338CA;
+    --success-color: #16A34A;
+    --failed-color: #DC2626;
+    --light-red: #FEF2F2;
+    --text-primary: #1F2937;
+    --text-secondary: #6B7280;
+    --bg-light: #F9FAFB;
+    --border-color: #E5E7EB;
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --border-radius: 12px;
+}
+
+.payment-page {
+    background-color: var(--bg-light);
+    min-height: 100vh;
+}
+
+.payment-content {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.payment-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.payment-header h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.payment-header p {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.payment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.box {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1.5rem;
+}
+.box:last-child {
+    margin-bottom: 0;
+}
+
+.section-title, .label-info {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+.label-info {
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.donation-amounts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.amount-box {
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #fff;
+    cursor: pointer;
+    text-align: center;
+    font-size: 1.125rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.amount-box:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.amount-box.selected {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.custom-donation-input {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0 1rem;
+    transition: border-color 0.2s ease;
+}
+.custom-donation-input:focus-within {
+    border-color: var(--primary-color);
+}
+.custom-donation-input span {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+.donation-input {
+    border: none;
+    background: none;
+    padding: 1rem 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    width: 100%;
+}
+.donation-input:focus {
+    outline: none;
+}
+
+.prayer-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    resize: vertical;
+    box-sizing: border-box;
+}
+.prayer-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.payment-select {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+}
+
+.box-va { text-align: center; }
+.box-va strong { font-size: 1.1rem; color: var(--text-primary); }
+.box-va .va-account-number {
+    background-color: var(--bg-light);
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+.box-va h3 { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin: 0; }
+.box-va span { font-size: 0.9rem; color: var(--text-secondary); }
+
+.total-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.total-box .total-amount {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.pay-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.pay-button:hover {
+    background-color: var(--primary-hover);
+}
+.pay-button:disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+}
+
+.error-message, .success-message {
+    text-align: center;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+}
+.error-message {
+    color: var(--failed-color);
+    background-color: var(--light-red);
+}
+.success-message {
+    color: var(--success-color);
+    background-color: #D1FAE5;
+}
+
+@media screen and (max-width: 678px) {
+  .payment-content {
+    padding: 0 1rem;
+    margin: 1rem 0;
+  }
+
+  .payment-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .payment-header p {
+    font-size: 1rem;
+  }
+
+  .payment-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .donation-amounts {
+    grid-template-columns: 1fr;
+  }
+
+  .amount-box {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  .custom-donation-input {
+    flex-direction: row;
+    padding: 0 0.75rem;
+  }
+
+  .custom-donation-input span {
+    font-size: 1rem;
+  }
+
+  .donation-input {
+    font-size: 1rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .prayer-textarea {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+  }
+
+  .payment-select {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+    background-position: right 0.75rem center;
+  }
+
+  .box-va h3 {
+    font-size: 1.25rem;
+  }
+
+  .total-box {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .total-box .total-amount {
+    font-size: 1.5rem;
+  }
+
+  .pay-button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  .error-message,
+  .success-message {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+  }
+}

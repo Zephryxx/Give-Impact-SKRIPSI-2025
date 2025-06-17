@@ -1,0 +1,128 @@
+.registerpage{
+    display: flex;
+    align-items: center; /* Pusat secara vertikal */
+    justify-content: center; /* Pusat secara horizontal */
+    min-height: 100vh; /* Tinggi viewport penuh */
+    background: linear-gradient(180deg, white, #74FFFF); /* Background gradasi */
+}
+
+.wrapperRegister{
+    width: 462px;
+    background-color: white;
+    border-radius: 25px;
+    align-items: center;
+    text-align: center;
+    padding: 30px 30px 18px 25px;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+}
+
+.registrasi-form{
+    text-align: left;
+}
+
+.regis-title{
+    font-size: 28px;
+}
+.registext{
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.input-register{
+    width: 421px;
+    height: 38px;
+    border-radius: 25px;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+    border-style: none;
+    padding-left: 30px;
+}
+
+.input-rekening{
+    height: 38px;
+    border-radius: 25px;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+    border-style: none;
+    padding-left: 30px;
+}
+
+.side-by-side-container {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group .input-register {
+    width: 100%;
+}
+
+.button-register{
+    align-items: center;
+    border-radius: 25px;
+    width: 184px;
+    height: 41px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    margin-left: 130px;
+    background-color:white;
+    box-shadow:  0 0.3rem 1rem 0 #D0CECE;
+    font-weight: bold;
+    border-style: none;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 678px) {
+  .registerpage {
+    padding: 1rem;
+    min-height: 100vh;
+  }
+
+  .wrapperRegister {
+    width: 100%;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0.3rem 0.75rem rgba(0, 0, 0, 0.1);
+  }
+
+  .regis-title {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .registext {
+    font-size: 12px;
+    text-align: left;
+    margin-bottom: 0.5rem;
+  }
+
+  .input-register,
+  .input-rekening {
+    width: 90%;
+    height: 38px;
+    padding-left: 20px;
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+
+  .side-by-side-container {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .input-group {
+    width: 100%;
+  }
+
+  .button-register {
+    width: 100%;
+    margin: 1.5rem 0 1rem 0;
+    font-size: 14px;
+    margin-left: 0;
+  }
+}
