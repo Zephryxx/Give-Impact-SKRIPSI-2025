@@ -693,7 +693,7 @@ app.post('/api/password/check-email', async (req, res) => {
     let connection;
     try {
         connection = await db.getConnection();
-        const sql = 'SELECT User_ID FROM `User` WHERE email = ?';
+        const sql = 'SELECT User_ID FROM `user` WHERE email = ?';
         const [users] = await connection.execute(sql, [email]);
 
         if (users.length === 0) {
@@ -723,7 +723,7 @@ app.put('/api/password/reset', async (req, res) => {
     try {
         connection = await db.getConnection();
 
-        const findUserQuery = 'SELECT password FROM `User` WHERE email = ?';
+        const findUserQuery = 'SELECT password FROM `user` WHERE email = ?';
         const [users] = await connection.execute(findUserQuery, [email]);
 
         if (users.length === 0) {
@@ -740,7 +740,7 @@ app.put('/api/password/reset', async (req, res) => {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
-        const sql = 'UPDATE `User` SET password = ? WHERE email = ?';
+        const sql = 'UPDATE `user` SET password = ? WHERE email = ?';
         const [result] = await connection.execute(sql, [hashedPassword, email]);
 
         if (result.affectedRows === 0) {
@@ -965,7 +965,7 @@ app.get('/api/campaigns', async (req, res) => {
                 k.target_donasi       AS targetAmount,
                 k.jenis,
                 k.status,
-                (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID AND status = 'Success') AS donors
+                (SELECT COUNT(*) FROM donasi WHERE kampanye_ID = k.Kampanye_ID AND status = 'Success') AS donors
             FROM kampanye k
             JOIN foundation f ON k.foundation_ID = f.Foundation_ID
             WHERE k.status = 'Active' AND k.tgl_selesai > NOW()
@@ -1016,7 +1016,7 @@ app.get('/api/foundation/my-campaigns', verifyToken, async (req, res) => {
                 k.donasi_saat_ini     AS currentAmount,
                 k.target_donasi       AS targetAmount,
                 k.status,
-                (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID AND status = 'Success') AS donors 
+                (SELECT COUNT(*) FROM donasi WHERE kampanye_ID = k.Kampanye_ID AND status = 'Success') AS donors 
             FROM kampanye k
             JOIN foundation f ON k.foundation_ID = f.Foundation_ID
             WHERE f.user_ID = ?
