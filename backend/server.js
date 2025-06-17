@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path')
 require('dotenv').config();
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 const PORT = process.env.PORT || 8081;
@@ -13,6 +15,12 @@ const PORT = process.env.PORT || 8081;
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -119,29 +127,23 @@ db.getConnection()
 //#endregion
 
 //#region MULTER
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/campaign_images/'); 
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'campaign_images', // Nama folder di Cloudinary
+    allowed_formats: ['jpeg', 'png', 'jpg'],
+    // public_id bisa diatur untuk nama file yang unik
+    public_id: (req, file) => {
+      const fileExtension = path.extname(file.originalname);
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      return 'gambar-' + uniqueSuffix;
     },
-    filename: function (req, file, cb) {
-        const fileExtension = path.extname(file.originalname); 
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const newFilename = 'gambar-' + uniqueSuffix + fileExtension;
-        console.log(`Generated filename: ${newFilename}`);
-        cb(null, newFilename);
-    }
+  },
 });
 
 const upload = multer({ 
     storage: storage,
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Only image file is allowed'), false);
-        }
-    },
-    limits: { fileSize: 1024 * 1024 * 5 } 
+    limits: { fileSize: 1024 * 1024 * 5 } // 5 MB limit
 });
 //#endregion
 
@@ -362,7 +364,7 @@ app.post('/api/buatkampanye', verifyToken, upload.single('gambar'), async (req, 
     if (!req.file){
         return res.status(400).json({ message: 'Banner photo must be uploaded' });
     }
-    const namaFileGambar = req.file.filename;
+    const namaFileGambar = req.file.path;
 
     let connection;
     try {
@@ -974,15 +976,15 @@ app.get('/api/campaigns', async (req, res) => {
 
         const [campaigns] = await connection.execute(sql);
 
-        const campaignsWithFullUrls = campaigns.map(campaign => {
-            const imageUrl = campaign.donationImg 
-                ? `${req.protocol}://${req.get('host')}/uploads/campaign_images/${campaign.donationImg}`
-                : null;
+        // const campaignsWithFullUrls = campaigns.map(campaign => {
+        //     const imageUrl = campaign.donationImg 
+        //         ? `${req.protocol}://${req.get('host')}/uploads/campaign_images/${campaign.donationImg}`
+        //         : null;
             
-            return { ...campaign, donationImg: imageUrl };
-        });
+        //     return { ...campaign, donationImg: imageUrl };
+        // });
     
-        res.json(campaignsWithFullUrls);
+        res.json(campaigns);
 
     } catch (error) {
         console.error("Error fetching campaigns:", error);
@@ -1025,15 +1027,15 @@ app.get('/api/foundation/my-campaigns', verifyToken, async (req, res) => {
 
         const [campaigns] = await connection.execute(sql, [loggedInUserId]);
 
-        const campaignsWithFullUrls = campaigns.map(campaign => {
-            const imageUrl = campaign.donationImg 
-                ? `${req.protocol}://${req.get('host')}/uploads/campaign_images/${campaign.donationImg}`
-                : null;
+        // const campaignsWithFullUrls = campaigns.map(campaign => {
+        //     const imageUrl = campaign.donationImg 
+        //         ? `${req.protocol}://${req.get('host')}/uploads/campaign_images/${campaign.donationImg}`
+        //         : null;
             
-            return { ...campaign, donationImg: imageUrl };
-        });
+        //     return { ...campaign, donationImg: imageUrl };
+        // });
     
-        res.json(campaignsWithFullUrls);
+        res.json(campaigns);
 
     } catch (error) {
         console.error("Error fetching foundation's campaigns:", error);
