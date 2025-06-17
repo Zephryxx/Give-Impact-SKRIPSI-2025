@@ -340,3 +340,53 @@
   text-align: center;
   margin-bottom: 1rem;
 }
+
+@media screen and (max-width: 678px) {
+  .foundation-profile {
+    padding: 1rem;
+    gap: 2rem;
+  }
+
+  .profile-box-foundation {
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .profile-box-foundation svg {
+    width: 6rem;
+    height: 6rem;
+    margin-top: 0;
+  }
+
+  .form-rows {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .edit-button {
+    align-self: center;
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+
+  .history-list {
+    grid-template-columns: 1fr;
+  }
+
+  .popup-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .rekening-fields {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .submit-button,
+  .rekening-button {
+    width: 100%;
+  }
+}

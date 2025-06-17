@@ -63,3 +63,42 @@
     color: #6b7280;
     text-align: right;
 }
+
+@media screen and (max-width: 678px) {
+  .foundation-card {
+    max-width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+  }
+
+  .foundationcard-image {
+    height: 5rem;
+  }
+
+  .foundationcard-title {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .foundationcard-name {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+
+  .foundationcard-label,
+  .foundationcard-amount,
+  .foundationcard-donor-info,
+  .foundationcard-days-left {
+    font-size: 0.7rem;
+  }
+
+  .foundationcard-days-left {
+    text-align: left; /* supaya sejajar saat space terbatas */
+    margin-top: 0.25rem;
+  }
+
+  .progress-bar {
+    height: 0.2rem;
+    margin: 0.4rem 0;
+  }
+}

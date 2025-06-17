@@ -166,3 +166,59 @@ body {
 .login-button-navbar:hover {
     background-color: var(--primary-hover);
 }
+
+@media screen and (max-width: 678px) {
+  .navbar {
+    flex-direction: row;
+    flex-wrap: wrap; /* supaya elemen bisa turun ke baris baru kalau kepanjangan */
+    justify-content: space-between;
+    padding: 1rem 0.5rem;
+    height: auto;
+  }
+
+  .navbar-title {
+    font-size: 1.2rem;
+    flex: 1 1 62px;
+  }
+
+  .navbar-center {
+    font-size: 1rem;
+    margin-right: 0;
+    margin-left: 42px;
+    flex: 1 1 100px;
+    text-align: center;
+  }
+
+  .navbar-right {
+    flex: 1 1 100px;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .profile-icon-box {
+    width: 36px;
+    height: 36px;
+  }
+
+  .profile-icon-box svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .dropdown-menu-profile {
+    width: 90%;
+    right: 0;
+    left: auto;
+  }
+
+  .dropdown-button {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .login-button-navbar {
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+  }
+}

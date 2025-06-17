@@ -76,3 +76,53 @@
     border-style: none;
     cursor: pointer;
 }
+
+@media screen and (max-width: 678px) {
+  .registerpage {
+    padding: 1rem;
+    min-height: 100vh;
+  }
+
+  .wrapperRegister {
+    width: 100%;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0.3rem 0.75rem rgba(0, 0, 0, 0.1);
+  }
+
+  .regis-title {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .registext {
+    font-size: 12px;
+    text-align: left;
+    margin-bottom: 0.5rem;
+  }
+
+  .input-register,
+  .input-rekening {
+    width: 90%;
+    height: 38px;
+    padding-left: 20px;
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+
+  .side-by-side-container {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .input-group {
+    width: 100%;
+  }
+
+  .button-register {
+    width: 100%;
+    margin: 1.5rem 0 1rem 0;
+    font-size: 14px;
+    margin-left: 0;
+  }
+}

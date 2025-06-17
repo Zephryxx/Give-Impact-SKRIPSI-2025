@@ -40,3 +40,37 @@
     font-size: 14px;
     color: #333;
 }
+
+@media screen and (max-width: 678px) {
+  .donasipage-card {
+    padding: 15px;
+  }
+
+  .donasipage-content {
+    flex-direction: column; /* Stack image & text vertically */
+    align-items: center;
+    text-align: center;
+  }
+
+  .donasipage-image {
+    width: 100%;
+    height: 160px; /* Tambah tinggi agar tetap proporsional */
+  }
+
+  .progress-container {
+    height: 5px;
+    margin: 8px 0;
+  }
+
+  .progress-fill {
+    width: 50%;
+  }
+
+  .donasi-bottom {
+    flex-direction: column;
+    align-items: center;
+    font-size: 13px;
+    gap: 5px;
+    text-align: center;
+  }
+}

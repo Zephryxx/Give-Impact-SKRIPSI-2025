@@ -184,3 +184,48 @@
     background-color: #e9ecef;
     color: #495057;
 }
+
+@media screen and (max-width: 678px) {
+  .detaildonation-card {
+    padding: 1.5rem;
+    width: 80%;
+  }
+
+  .campaign-amount {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .progress-goal {
+    text-align: center;
+  }
+
+  .donation-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .donation-amount {
+    font-size: 0.95rem;
+  }
+
+  .donation-checkbox {
+    align-self: flex-end;
+  }
+
+  .button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .action-button {
+    width: 100%;
+  }
+
+  .kampanye-title {
+    font-size: 1.5rem;
+    padding: 0 1rem;
+  }
+}
+

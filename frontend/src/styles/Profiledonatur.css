@@ -30,7 +30,7 @@
     font-size: 1.75rem;
     font-weight: 600;
     margin-bottom: 1rem;
-    margin-left: 5%;
+    margin-left: 15%;
     color: var(--text-primary);
 }
 
@@ -72,14 +72,15 @@
 }
 
 .profileDonatur-label {
-    width: 15%;
+    width: 30%;
     font-weight: 700;
     color: var(--text-secondary);
     flex-shrink: 0;
 }
 
 .input-profile-donatur {
-    width: 550px;
+    width: 100%;
+    max-width: 550px; /* tetap batasi di desktop */
     padding: 0.75rem;
     border: 1px solid var(--border-color);
     border-radius: 6px;
@@ -87,6 +88,7 @@
     font-size: 1rem;
     color: var(--text-primary);
 }
+
 
 .edit-button {
     align-self: flex-end;
@@ -219,7 +221,7 @@
     text-align: center;
 
 }
-.status-Success, .status-diterima {
+.status-Success .status-diterima {
     color: var(--success-color);
     background-color: var(--light-green);
 }
@@ -227,7 +229,7 @@
     color: #b79b00;
     background-color: var(--light-yellow);
 }
-.status-Failed, .status-tidak-diterima {
+.status-Failed .status-tidak-diterima {
     color: var(--failed-color);
     background-color: var(--light-red);
 }
@@ -318,4 +320,115 @@
     border-radius: 6px;
     text-align: center;
     margin-bottom: 1rem;
+}
+
+@media screen and (max-width: 678px) {
+  /* === PROFILE SECTION DONATUR === */
+  .profile-box-donatur {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .profile-picture-wrapper svg,
+  .profile-box-donatur svg {
+    width: 5rem;
+    height: 5rem;
+    margin-bottom: 1rem;
+    margin: auto;
+  }
+
+  .profile-form {
+    width: 100%;
+  }
+
+  .field-donatur {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .profileDonatur-label {
+    width: 50%;
+  }
+
+  .input-profile-donatur {
+    width: 90%;
+  }
+
+  .edit-button {
+    width: 100%;
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  /* === TRANSACTION HISTORY === */
+  .transaction-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .history-title {
+    font-size: 1.5rem;
+  }
+
+  .filters select {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .transaction-header-row,
+  .transaction-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .transaction-amount,
+  .transaction-details,
+  .transaction-status,
+  .transaction-date {
+    width: 100%;
+    text-align: left;
+    flex: unset;
+  }
+
+  .status-pill {
+    width: 90%;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* === POPUP EDIT PROFILE === */
+  .popup-content {
+    width: 90%;
+    padding: 1.25rem;
+  }
+
+  .edit-profile-title {
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  .input-editprofile {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .submit-button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .close-btn {
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+  }
 }

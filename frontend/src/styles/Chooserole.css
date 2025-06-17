@@ -39,3 +39,32 @@
     box-shadow:  0 0.3rem 1rem 0 #D0CECE;
     cursor: pointer;
 }
+
+@media screen and (max-width: 678px) {
+  .chooserole-container {
+
+    padding: 2rem 1rem;
+    height: 100vh;
+  }
+
+  .chooserole-wrapper {
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0.3rem 1rem rgba(0, 0, 0, 0.1);
+  }
+
+  .chooserole-title {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .chooserole-button {
+    width: 100%;
+    height: 45px;
+    font-size: 1rem;
+    margin: 0.75rem 0;
+  }
+}

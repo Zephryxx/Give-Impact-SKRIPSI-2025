@@ -92,3 +92,30 @@
     margin-top: 20px;
     text-align: center;
 }
+
+@media screen and (max-width: 678px) {
+  .form-title {
+    margin-left: 0;
+    text-align: center;
+    font-size: 1.25rem;
+  }
+
+  .donation-form {
+    margin-left: 0;
+    width: 90%;
+    padding: 20px;
+  }
+
+  .date-group {
+    flex-direction: column;
+  }
+
+  .input-date-buatkampanye {
+    margin: 10px 0;
+  }
+
+  .submit-button {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+}
