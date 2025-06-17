@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
     return res.json({ message: "From Backend Side" });
 });
 
-app.get('/users', async (req, res) => {
+app.get('/api/users', async (req, res) => {
     const sql = "SELECT User_ID, nama, email, tipe_akun, dibuat FROM `User`";
                                                                             
     try {
