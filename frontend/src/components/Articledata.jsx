@@ -1,7 +1,6 @@
 import gempa from '../img/img_bantuan_korban_gempa.jpeg'
 import longsor from "../img/longsor.jpeg"
 import bangunan from '../img/img_bantuan_donasi_pembangunan.jpeg'
-const placeholderImg = 'https://placehold.co/800x400?text=Artikel';
 
 export const articleData = [
   {

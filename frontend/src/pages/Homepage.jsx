@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Headeruser from "../components/Headeruser";
 import ArticleCard from "../components/Articlecard";
-import DonationCard from "../components/Donationcard";
-import ops from '../img/images.jpeg'
-import banjir from '../img/img_bantuan_korban_banjir.jpeg'
-import kebakaran from '../img/kebakaran.jpeg'
 import { useNavigate } from 'react-router-dom';
 import { articleData } from '../components/Articledata';
 import Foundationcard from '../components/Foundationcard';

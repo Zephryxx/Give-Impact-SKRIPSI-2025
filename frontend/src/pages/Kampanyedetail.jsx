@@ -1,7 +1,7 @@
 import '../styles/Kampanyedetail.css'; 
 import Headeruser from '../components/Headeruser';
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const formatRupiah = (angka) => {
@@ -16,8 +16,6 @@ const formatRupiah = (angka) => {
 function Kampanyedetail() {
     const { id } = useParams();
     const { authState } = useContext(AuthContext);
-
-    const navigate = useNavigate();
 
     const [campaign, setCampaign] = useState(null);
     const [loading, setLoading] = useState(true);

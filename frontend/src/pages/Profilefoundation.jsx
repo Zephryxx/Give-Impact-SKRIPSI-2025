@@ -33,62 +33,13 @@ function Profilefoundation() {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [editData, setEditData] = useState({
         nama_foundation: '',
+        username: '',
+        email: '',
         no_telp: '',
         no_pajak: '',
         rekening: []
     });
 
-    // const dummyData = [
-    //     {
-    //         nama: 'Bantu Pendidikan Anak Desa',
-    //         donasi: 'Rp. 12.500.000',
-    //         donatur: 145,
-    //         tanggal: '12 Juni 2025',
-    //         progress: 60,
-    //     },
-    //     {
-    //         nama: 'Dukung UMKM Lokal',
-    //         donasi: 'Rp. 7.200.000',
-    //         donatur: 88,
-    //         tanggal: '28 Mei 2025',
-    //         progress: 45,
-    //     },
-    //     {
-    //         nama: 'Bantuan Korban Banjir',
-    //         donasi: 'Rp. 20.000.000',
-    //         donatur: 210,
-    //         tanggal: '30 Juni 2025',
-    //         progress: 80,
-    //     },
-    //     {
-    //         nama: 'Renovasi Mushola Kampung',
-    //         donasi: 'Rp. 5.600.000',
-    //         donatur: 65,
-    //         tanggal: '15 Juli 2025',
-    //         progress: 30,
-    //     },
-    //     {
-    //         nama: 'Pembangunan Sumur Air Bersih',
-    //         donasi: 'Rp. 10.000.000',
-    //         donatur: 120,
-    //         tanggal: '10 Agustus 2025',
-    //         progress: 55,
-    //     },
-    //     {
-    //         nama: 'Sembako untuk Dhuafa',
-    //         donasi: 'Rp. 8.400.000',
-    //         donatur: 99,
-    //         tanggal: '20 Juni 2025',
-    //         progress: 40,
-    //     },
-    //     {
-    //         nama: 'Beasiswa Santri',
-    //         donasi: 'Rp. 15.750.000',
-    //         donatur: 160,
-    //         tanggal: '25 Juli 2025',
-    //         progress: 70,
-    //     },
-    // ];
 
     useEffect(() => {
     
@@ -146,8 +97,8 @@ function Profilefoundation() {
     };
 
     const handleInputChange = (e) => {
-        const { foundation, value } = e.target;
-        setEditData(prev => ({ ...prev, [foundation]: value }));
+        const { name, value } = e.target;
+        setEditData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleProviderSelectInPopup = (e) => {
@@ -162,132 +113,7 @@ function Profilefoundation() {
             alert("Pilih provider dan isi nomor rekening.");
             return;
         }
-        const updatedList = [...(editData.rekening || [])];<div>
-            <Headeruser />
-            <div className="foundation-profile">
-                {/* Profile Section */}
-                <div className="profile-section">
-                    <h2 className="profile-title-foundation">Profil Yayasan</h2>
-                    <div className="profile-box-foundation">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                            <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
-                        </svg>
-                        <div className="profile-form">
-                            <div className="form-rows">
-                                <div className="left-fields-foundation">
-                                    <div className="field-foundation">
-                                        <label className='profile-label'>Nama Yayasan</label>
-                                        <input className='input-profile-foundation' type="text" value={profileData.nama_foundation} readOnly />
-                                    </div>
-                                    <div className="field-foundation">
-                                        <label className='profile-label'>Email</label>
-                                        <input className='input-profile-foundation' type="text" value={profileData.email} readOnly />
-                                    </div>
-                                    <div className="field-foundation">
-                                        <label className='profile-label'>No. Telepon</label>
-                                        <input className='input-profile-foundation' type="text" value={profileData.no_telp} readOnly />
-                                    </div>
-                                </div>
-                                <div className="right-fields-foundation">
-                                    <div className="field-foundation">
-                                        <label className='profile-label'>No. Pajak (NPWP)</label>
-                                        <input className='input-profile-foundation' type="text" value={profileData.no_pajak} readOnly />
-                                    </div>
-                                    <div className="field-foundation">
-                                        <label className='profile-label'>Rekening Pembayaran</label>
-                                        <select className='select-profile-foundation' value={selectedProvider} onChange={(e) => setSelectedProvider(e.target.value)}>
-                                            {providerOptions.map(p => <option key={p} value={p}>{p}</option>)}
-                                        </select>
-                                    </div>
-                                    <div className="field-foundation">
-                                        <label className='profile-label'>Nomor Rekening</label>
-                                        <input className='input-profile-foundation' type="text" value={displayNumber} readOnly />
-                                    </div>
-                                </div>
-                            </div>
-                            <button className="edit-button" onClick={handleOpenPopup}>Edit Profil</button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* History Section */}
-                <div className="history-section">
-                    <h2 className="history-title">Riwayat Kampanye Anda</h2>
-                    <div className="history-list">
-                        {campaignHistory.length > 0 ? (
-                            campaignHistory.map(campaign => {
-                                const percentage = campaign.targetAmount > 0 ? Math.min((campaign.currentAmount / campaign.targetAmount) * 100, 100) : 0;
-                                const isFinished = campaign.status !== 'Active';
-                                let daysLeftText = '';
-                                if (!isFinished) {
-                                    const days = Math.ceil((new Date(campaign.enDate) - new Date()) / (1000 * 60 * 60 * 24));
-                                    daysLeftText = days > 0 ? `${days} hari lagi` : 'Hari terakhir';
-                                }
-
-                                return (
-                                    <div key={campaign.donationId} className="history-card" onClick={() => navigate(`/donationcheck/${campaign.donationId}`)}>
-                                        <div className="history-img-container">
-                                            <img className="history-img" src={campaign.donationImg || 'https://placehold.co/400x200?text=Campaign'} alt={campaign.donationTitle} />
-                                        </div>
-                                        <div className="history-content">
-                                            <h3 className="history-title">{campaign.donationTitle}</h3>
-                                            <div className="progress-section">
-                                                <div className="progress-labels">
-                                                    <span>{formatRupiah(campaign.currentAmount)}</span>
-                                                    <span>Target: {formatRupiah(campaign.targetAmount)}</span>
-                                                </div>
-                                                <div className="progress-bar">
-                                                    <div className="progress-fill" style={{ width: `${percentage}%` }}></div>
-                                                </div>
-                                            </div>
-                                            <div className="history-details">
-                                                <span>{campaign.donors} Donatur</span>
-                                                <b>{isFinished ? 'Selesai' : daysLeftText}</b>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })
-                        ) : (
-                            <p>Anda belum memiliki riwayat kampanye.</p>
-                        )}
-                    </div>
-                </div>
-
-                {/* Edit Profile Popup */}
-                {isPopupOpen && (
-                    <div className="popup-overlay">
-                        <div className="popup-content">
-                            <button className="close-btn" onClick={() => setIsPopupOpen(false)}>&times;</button>
-                            <h2 className='edit-profile-title'>Edit Profil Yayasan</h2>
-                            {error && <p className="error-message">{error}</p>}
-                            <form onSubmit={handleSubmit} className="editprofile-form-user">
-                                <input name="nama_foundation" className='input-editprofile' placeholder="Nama Yayasan" value={editData.nama_foundation} onChange={handleInputChange} required />
-                                <input name="no_telp" className='input-editprofile' placeholder="No. Telepon" value={editData.no_telp} onChange={handleInputChange} required />
-                                <input name="no_pajak" className='input-editprofile' placeholder="No. Pajak (NPWP)" value={editData.no_pajak} onChange={handleInputChange} required />
-                                
-                                <div className="rekening-section">
-                                    <div className="rekening-fields">
-                                        {/* --- PERUBAHAN DIMULAI: Menyesuaikan JSX dengan nama state yang dikembalikan --- */}
-                                        <select className="input-editprofile" value={provider} onChange={(e) => setProvider(e.target.value)}>
-                                            <option value="" disabled>Pilih Provider</option>
-                                            {providerOptions.map(p => <option key={p} value={p}>{p}</option>)}
-                                        </select>
-                                        <input className="input-editprofile" placeholder="Nomor Rekening" value={rekening} onChange={(e) => setRekening(e.target.value)} />
-                                        {/* --- PERUBAHAN SELESAI --- */}
-                                    </div>
-                                    <button type="button" className='rekening-button' onClick={handleUpdateRekeningList}>Tambah / Perbarui Rekening</button>
-                                </div>
-                                <p style={{fontSize: '0.8rem', color: '#6c757d', textAlign: 'center'}}>Data rekening yang tersimpan: {editData.rekening.map(r => r.provider).join(', ') || 'Belum ada'}</p>
-                                
-                                <button type="submit" className='submit-button'>Simpan Perubahan</button>
-                            </form>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
+        const updatedList = Array.isArray(editData.rekening) ? [...editData.rekening] : [];
         const existingAccountIndex = updatedList.findIndex(r => r.provider === provider);
 
         if (existingAccountIndex > -1) {
@@ -307,6 +133,8 @@ function Profilefoundation() {
         try {
             const payload = {
                 nama_foundation: editData.nama_foundation,
+                username: editData.username,
+                email: editData.email,
                 no_telp: editData.no_telp,
                 no_pajak: editData.no_pajak,
                 rekeningList: editData.rekening
@@ -353,6 +181,10 @@ function Profilefoundation() {
                                         <input className='input-profile-foundation' type="text" value={profileData.nama_foundation} readOnly />
                                     </div>
                                     <div className="field-foundation">
+                                        <label className='profile-label'>Username:</label>
+                                        <input className='input-profile-foundation' type="text" value={profileData.username} readOnly />
+                                    </div>
+                                    <div className="field-foundation">
                                         <label className='profile-label'>Email</label>
                                         <input className='input-profile-foundation' type="text" value={profileData.email} readOnly />
                                     </div>
@@ -368,7 +200,7 @@ function Profilefoundation() {
                                     </div>
                                     <div className="field-foundation">
                                         <label className='profile-label'>Rekening Pembayaran</label>
-                                        <select className='select-profile-foundation' value={selectedProvider} onChange={(e) => setSelectedProvider(e.target.value)}>
+                                        <select className='select-profile-foundation' value={selectedProvider} onChange={handleDisplayProviderChange}>
                                             {providerOptions.map(p => <option key={p} value={p}>{p}</option>)}
                                         </select>
                                     </div>
@@ -436,18 +268,18 @@ function Profilefoundation() {
                             {error && <p className="error-message">{error}</p>}
                             <form onSubmit={handleSubmit} className="editprofile-form-user">
                                 <input name="nama_foundation" className='input-editprofile' placeholder="Nama Yayasan" value={editData.nama_foundation} onChange={handleInputChange} required />
+                                <input name="username" className='input-editprofile' placeholder="Nama Pengguna" value={editData.username} onChange={handleInputChange} required />
+                                <input name="email" className='input-editprofile' placeholder="email pengguna" value={editData.email} onChange={handleInputChange} required />
                                 <input name="no_telp" className='input-editprofile' placeholder="No. Telepon" value={editData.no_telp} onChange={handleInputChange} required />
                                 <input name="no_pajak" className='input-editprofile' placeholder="No. Pajak (NPWP)" value={editData.no_pajak} onChange={handleInputChange} required />
                                 
                                 <div className="rekening-section">
                                     <div className="rekening-fields">
-                                        {/* --- PERUBAHAN DIMULAI: Menyesuaikan JSX dengan nama state yang dikembalikan --- */}
-                                        <select className="input-editprofile" value={provider} onChange={(e) => setProvider(e.target.value)}>
+                                        <select className="input-editprofile" value={provider} onChange={handleProviderSelectInPopup}>
                                             <option value="" disabled>Pilih Provider</option>
                                             {providerOptions.map(p => <option key={p} value={p}>{p}</option>)}
                                         </select>
                                         <input className="input-editprofile" placeholder="Nomor Rekening" value={rekening} onChange={(e) => setRekening(e.target.value)} />
-                                        {/* --- PERUBAHAN SELESAI --- */}
                                     </div>
                                     <button type="button" className='rekening-button' onClick={handleUpdateRekeningList}>Tambah / Perbarui Rekening</button>
                                 </div>

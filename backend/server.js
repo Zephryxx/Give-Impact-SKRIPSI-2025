@@ -897,19 +897,44 @@ app.put('/api/profile/donatur', verifyToken, async (req, res) => {
 
 app.put('/api/profile/foundation', verifyToken, async (req, res) => {
     const userId = req.user.userId;
-    const { nama_foundation, no_telp, no_pajak, rekeningList } = req.body;
+    const { nama_foundation, no_telp, no_pajak, rekeningList, username, email } = req.body;
 
-    if (!nama_foundation || !no_telp || !no_pajak || !rekeningList || !Array.isArray(rekeningList)) {
+    if (!nama_foundation || !username || !email || !no_telp || !no_pajak || !rekeningList || !Array.isArray(rekeningList)) {
         return res.status(400).json({ message: "Missing required profile fields, or rekening data is not an array." });
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: "Invalid email format." });
+    }
+    const phoneRegex = /^\d{10,15}$/;
+    if (!phoneRegex.test(no_telp)) {
+        return res.status(400).json({ message: "Format nomor telepon tidak valid (10-15 digit)." });
+    }
+
+    const taxNumberRaw = String(no_pajak).replace(/[\.\-]/g, '');
+    if (isNaN(taxNumberRaw) || taxNumberRaw.length !== 15) {
+        return res.status(400).json({ message: "Format NPWP tidak valid (harus 15 digit angka)." });
+    }
+
+    for (const acc of rekeningList) {
+        if (!acc.provider || !acc.number || typeof acc.number !== 'string' || !/^\d+$/.test(acc.number)) {
+             return res.status(400).json({ message: `Data rekening tidak valid untuk provider ${acc.provider}. Nomor harus berupa string angka.` });
+        }
+    }
+
 
     const rekeningJsonString = JSON.stringify(rekeningList);
 
     let connection;
     try {
         connection = await db.getConnection();
-        const sql = 'UPDATE Foundation SET nama_foundation = ?, no_telp = ?, no_pajak = ?, rekening = ? WHERE user_ID = ?';
-        await connection.execute(sql, [nama_foundation, no_telp, no_pajak, rekeningJsonString, userId]);
+
+        const updateUserSql = 'UPDATE `User` SET nama = ?, email = ? WHERE User_ID = ?';
+        await connection.execute(updateUserSql, [username, email, userId]);
+        const updateFoundationSql = 'UPDATE Foundation SET nama_foundation = ?, no_telp = ?, no_pajak = ?, rekening = ? WHERE user_ID = ?';
+        await connection.execute(updateFoundationSql, [nama_foundation, no_telp, no_pajak, rekeningJsonString, userId]);
+
+        await connection.commit();
 
         res.json({ message: 'Foundation profile updated successfully!' });
 

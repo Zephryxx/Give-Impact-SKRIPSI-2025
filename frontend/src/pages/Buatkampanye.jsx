@@ -23,8 +23,6 @@ const Buatkampanye = () => {
         previewImage: "",
 
     });
-
-    const [previewImage, setPreviewImage] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -51,11 +49,9 @@ const Buatkampanye = () => {
         const file = e.target.files[0];
         if (file && file.type.startsWith('image/')) {
             setFormData(prev => ({ ...prev, gambar: file }));
-            setPreviewImage(URL.createObjectURL(file));
             setError('');
         } else {
             setError('Please select a valid image file (jpg, png, etc).');
-            setPreviewImage('');
             setFormData(prev => ({ ...prev, gambar: null }));
         }
     };
@@ -123,7 +119,6 @@ const Buatkampanye = () => {
                 kategori: '', judul: '', penerima: '', deskripsi: '', rincian: '',
                 target: '', tanggalMulai: '', tanggalBerakhir: '', gambar: null,
             });
-            setPreviewImage('');
             setTimeout(() => {
                     navigate('/home/foundation');
                 }, 2000);

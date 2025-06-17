@@ -2,9 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import '../styles/Homepagefoundation.css'
 import Headeruser from '../components/Headeruser';
 import Foundationcard from '../components/Foundationcard';
-import ops from '../img/images.jpeg'
-import banjir from '../img/img_bantuan_korban_banjir.jpeg'
-import kebakaran from '../img/kebakaran.jpeg'
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
