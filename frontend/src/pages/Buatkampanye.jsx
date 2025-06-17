@@ -100,8 +100,8 @@ const Buatkampanye = () => {
         });
 
         try {
-            const apiUrl = process.env.;
-                const response = await fetch(`${apiUrl}/api/campaigns`); {
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await fetch(`${apiUrl}/api/buatkampanye`, {
                 method: 'POST',
                 headers: {
                 'Authorization': `Bearer ${token}`
