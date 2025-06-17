@@ -66,33 +66,36 @@ function Donationpage() {
   return (
     <div className="donationpage-container">
       <Headeruser />
-      
-      <div className="kategori-container">
-        {kategoriList.map((item, index) => (
-          <KategoriButton
-            key={index}
-            text={item}
-            onClick={() => setSelectedCategory(item)}
-            isActive={selectedCategory === item}
-          />
-        ))}
-      </div>
+      <div className="donationpage-content-wrapper">
 
-      <div className="donasi-list">
-        {loading && <p>Loading campaigns...</p>}
-        {error && <p className="error-message">Error: {error}</p>}
-        {!loading && !error && (
-            filteredCampaigns.length > 0 ? (
-                filteredCampaigns.map((item) => (
-                    // Make each card a clickable link to its detail page
-                    <div key={item.id} onClick={() => navigate(`/donationdetail/${item.id}`)}>
-                        <Donationpagecard campaign={item} />
-                    </div>
-                ))
-            ) : (
-                <p>Tidak ada kampanye yang cocok dengan kategori ini.</p>
-            )
-        )}
+        <div className="kategori-container">
+          {kategoriList.map((item, index) => (
+            <KategoriButton
+              key={index}
+              text={item}
+              onClick={() => setSelectedCategory(item)}
+              isActive={selectedCategory === item}
+            />
+          ))}
+        </div>
+
+        <div className="donasi-list">
+          {loading && <p>Loading campaigns...</p>}
+          {error && <p className="error-message">Error: {error}</p>}
+          {!loading && !error && (
+              filteredCampaigns.length > 0 ? (
+                  filteredCampaigns.map((item) => (
+                      // Make each card a clickable link to its detail page
+                      <div key={item.id} onClick={() => navigate(`/donationdetail/${item.id}`)}>
+                          <Donationpagecard campaign={item} />
+                      </div>
+                  ))
+              ) : (
+                  <p>Tidak ada kampanye yang cocok dengan kategori ini.</p>
+              )
+          )}
+        </div>
+        
       </div>
     </div>
   );

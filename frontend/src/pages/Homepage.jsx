@@ -7,6 +7,15 @@ import Foundationcard from '../components/Foundationcard';
 import { Link } from 'react-router-dom';
 import "../styles/Homepage.css";
 
+const formatRupiah = (angka) => {
+    if (angka === null || angka === undefined) return 'Rp 0';
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(angka);
+};
+
 function Homepage (){
 
     const navigate = useNavigate();
@@ -57,6 +66,7 @@ function Homepage (){
                                     <Foundationcard
                                         key={campaign.donationId}
                                         {...campaign}
+                                        currentAmount={formatRupiah(campaign.currentAmount)}
                                         baseUrl="/donationdetail"
                                     />
                                 ))
@@ -73,6 +83,7 @@ function Homepage (){
                                     <Foundationcard
                                         key={campaign.donationId}
                                         {...campaign}
+                                        currentAmount={formatRupiah(campaign.currentAmount)}
                                         baseUrl="/donationdetail"
                                     />
                                 ))

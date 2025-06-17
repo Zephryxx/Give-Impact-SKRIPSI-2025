@@ -24,14 +24,20 @@
   margin-bottom: 1rem;
 }
 
-.card-container {
+/* .card-container {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+} */
+ 
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
 .donasipage-button{
-  display: flex;
+  /* display: flex;
   justify-content: center;
   align-items: center;
   width: 110px;
@@ -42,10 +48,13 @@
   font-weight: bold;
   border-radius: 7px;
   box-shadow:  0 0.1rem 1rem 0 #D0CECE;
-  cursor: pointer;
+  cursor: pointer; */
+  align-self: flex-end;
+  margin-top: 0;
+  margin-bottom: 1rem
 }
 
-.donation-box{
+/* .donation-box{
   border-radius: 10px;
   padding-left: 30px;
   padding-bottom: 30px;
@@ -59,6 +68,14 @@
   height: fit-content;
   padding-bottom: 30px;
   box-shadow:  0 0.1rem 1rem 0 #D0CECE;
+} */
+ 
+.donation-box,
+.article-box {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 @media screen and (max-width: 678px) {
@@ -67,21 +84,26 @@
     gap: 1.5rem;
   }
 
-  .card-container {
+  /* .card-container {
     width: 90%;
     flex-direction: column;
     gap: 1rem;
-  }
+  } */
 
   .donasipage-button {
-    width: 97%;
+    /* width: 97%;
     margin: 10px auto;
-    font-size: 1rem;
+    font-size: 1rem; */
+    width: auto;
+    padding: 0.8rem 1.5rem;
+    align-self: center;
+    font-size: 0.9rem;
   }
 
   .donation-box,
   .article-box {
-    padding: 20px;
+    /* padding: 20px; */
+    padding: 1.5rem;
   }
 
   .section-title-card {

@@ -13,10 +13,10 @@
 
 .kampanyedetail-image {
   width: 100%;
-  height: 250px;
-  aspect-ratio: 16 / 9;
+  height: 300px;
   object-fit: cover;
   border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .kampanyedetail-title {

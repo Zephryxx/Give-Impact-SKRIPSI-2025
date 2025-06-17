@@ -967,7 +967,7 @@ app.get('/api/campaigns', async (req, res) => {
             FROM kampanye k
             JOIN foundation f ON k.foundation_ID = f.Foundation_ID
             WHERE k.status = 'Active' AND k.tgl_selesai > NOW()
-            ORDER BY RAND();
+            ORDER BY k.tgl_selesai;
         `;
 
         const [campaigns] = await connection.execute(sql);

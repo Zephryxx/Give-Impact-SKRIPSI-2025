@@ -6,31 +6,50 @@
     background-color:white; /* Tailwind gray-100 */
 }
 
-.kategori-button {
-    padding: 10px 20px;
-    border-radius: 20px;
-    background-color: #e0e0e0;
-    border: none;
-    cursor: pointer;
-  
-}
-
 .kategori-container {
     display: flex;
     justify-content: center;
     gap: 20px;
     padding: 20px;
 }
-  
+
+.donationpage-content-wrapper {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
 .donasi-list {
-    display: flex;
+    /* display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 0 20px 40px;
+    padding: 0 20px 40px; */
+    padding: 0;
+}
+
+.kategori-button {
+  /* padding: 10px 20px;
+  border-radius: 20px;
+  background-color: #e0e0e0;
+  border: none;
+  cursor: pointer; */
+  padding: 10px 20px;
+  border-radius: 20px;
+  background-color: #f3f4f6;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.kategori-button:not(.active):hover {
+  background-color: #e5e7eb;
 }
 
 .kategori-button.active {
-  background-color: #4CAF50;
+  background-color: #2563eb;
   color: white;
 }
 
@@ -51,5 +70,19 @@
   .donasi-list {
     padding: 0 10px 30px;
     gap: 16px;
+  }
+
+  .donationpage-content-wrapper {
+    padding: 1rem;
+  }
+
+   .donation-card {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .donation-card__image-container {
+    width: 100%; 
+    height: 200px;
   }
 }
