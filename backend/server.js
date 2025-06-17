@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/users', async (req, res) => {
-    const sql = "SELECT User_ID, nama, email, tipe_akun, dibuat FROM `User`";
+    const sql = "SELECT User_ID, nama, email, tipe_akun, dibuat FROM `user`";
                                                                             
     try {
         const [rows] = await db.query(sql);
@@ -171,7 +171,7 @@ app.post('/api/register/donatur', async (req, res) => {
         connection = await db.getConnection();
         await connection.beginTransaction();
 
-        const [existingUsers] = await connection.execute('SELECT User_ID FROM `User` WHERE email = ?', [email]);
+        const [existingUsers] = await connection.execute('SELECT User_ID FROM `user` WHERE email = ?', [email]);
         if (existingUsers.length > 0) {
             await connection.rollback();
             return res.status(409).json({ message: "Email already registered." });
@@ -182,7 +182,7 @@ app.post('/api/register/donatur', async (req, res) => {
 
         const tipe_akun = 'Donatur';
 
-        const userInsertQuery = 'INSERT INTO `User` (nama, email, password, tipe_akun, dibuat) VALUES (?, ?, ?, ?, NOW())';
+        const userInsertQuery = 'INSERT INTO `user` (nama, email, password, tipe_akun, dibuat) VALUES (?, ?, ?, ?, NOW())';
         const [userResult] = await connection.execute(userInsertQuery, [nama, email, hashedPassword, tipe_akun]);
         
         const newUserId = userResult.insertId;
@@ -191,7 +191,7 @@ app.post('/api/register/donatur', async (req, res) => {
             throw new Error('Failed to create user record.');
         }
 
-        const donorInsertQuery = 'INSERT INTO Donor (user_ID, no_telp) VALUES (?, ?)';
+        const donorInsertQuery = 'INSERT INTO donor (user_ID, no_telp) VALUES (?, ?)';
         await connection.execute(donorInsertQuery, [newUserId, no_telp]);
 
         await connection.commit();
@@ -249,7 +249,7 @@ app.post('/api/register/foundation', async (req, res) => {
         connection = await db.getConnection();
         await connection.beginTransaction();
         
-        const [existingUsers] = await connection.execute('SELECT User_ID FROM `User` WHERE email = ?', [email]);
+        const [existingUsers] = await connection.execute('SELECT User_ID FROM `user` WHERE email = ?', [email]);
         if (existingUsers.length > 0) {
             await connection.rollback();
             return res.status(409).json({ message: "Email already registered." });
@@ -260,7 +260,7 @@ app.post('/api/register/foundation', async (req, res) => {
 
         const tipe_akun = 'Foundation'; 
         
-        const userInsertQuery = 'INSERT INTO `User` (nama, email, password, tipe_akun, dibuat) VALUES (?, ?, ?, ?, NOW())';
+        const userInsertQuery = 'INSERT INTO `user` (nama, email, password, tipe_akun, dibuat) VALUES (?, ?, ?, ?, NOW())';
         const [userResult] = await connection.execute(userInsertQuery, [nama_user, email, hashedPassword, tipe_akun]);
         
         const newUserId = userResult.insertId;
@@ -269,7 +269,7 @@ app.post('/api/register/foundation', async (req, res) => {
             throw new Error('Failed to create user record for foundation.');
         }
 
-const foundationInsertQuery = 'INSERT INTO Foundation (user_ID, nama_foundation, no_telp, no_pajak, rekening) VALUES (?, ?, ?, ?, ?)';
+const foundationInsertQuery = 'INSERT INTO foundation (user_ID, nama_foundation, no_telp, no_pajak, rekening) VALUES (?, ?, ?, ?, ?)';
         await connection.execute(foundationInsertQuery, [newUserId, nama_foundation, no_telp, no_pajak, rekeningJson]);
 
         await connection.commit();
@@ -299,7 +299,7 @@ app.post('/api/login', async (req, res) => {
     try {
         connection = await db.getConnection();
         
-        const findUserQuery = 'SELECT User_ID, nama, email, password AS hashedPassword, tipe_akun FROM `User` WHERE email = ?';
+        const findUserQuery = 'SELECT User_ID, nama, email, password AS hashedPassword, tipe_akun FROM `user` WHERE email = ?';
         const [users] = await connection.execute(findUserQuery, [email]);
 
         if (users.length === 0) {
@@ -368,7 +368,7 @@ app.post('/api/buatkampanye', verifyToken, upload.single('gambar'), async (req, 
         connection = await db.getConnection();
         await connection.beginTransaction();
 
-        const [foundations] = await connection.execute('SELECT Foundation_ID FROM Foundation WHERE user_ID = ?', [userId]);
+        const [foundations] = await connection.execute('SELECT Foundation_ID FROM foundation WHERE user_ID = ?', [userId]);
         if (foundations.length === 0) {
             return res.status(403).json({ message: 'You are not authorized to create a campaign.' });
         }
@@ -471,7 +471,7 @@ app.get('/api/campaigns/:id/pending-donations', verifyToken, async (req, res) =>
         connection = await db.getConnection();
 
         const [campaigns] = await connection.execute(
-            'SELECT f.user_ID FROM Kampanye k JOIN Foundation f ON k.foundation_ID = f.Foundation_ID WHERE k.Kampanye_ID = ?',
+            'SELECT f.user_ID FROM kampanye k JOIN foundation f ON k.foundation_ID = f.Foundation_ID WHERE k.Kampanye_ID = ?',
             [kampanyeId]
         );
 
@@ -490,10 +490,10 @@ app.get('/api/campaigns/:id/pending-donations', verifyToken, async (req, res) =>
                 d.jumlah,
                 d.tgl_donasi,
                 d.status
-            FROM Donasi d
-            JOIN Donor dn ON d.donor_ID = dn.Donor_ID
-            JOIN User u ON dn.user_ID = u.user_ID
-            JOIN Pembayaran p ON d.pembayaran_ID = p.pembayaran_ID
+            FROM donasi d
+            JOIN donor dn ON d.donor_ID = dn.Donor_ID
+            JOIN user u ON dn.user_ID = u.user_ID
+            JOIN pembayaran p ON d.pembayaran_ID = p.pembayaran_ID
             WHERE d.kampanye_ID = ? AND d.status = 'Pending'
             ORDER BY d.tgl_donasi ASC;
         `;
@@ -528,17 +528,17 @@ app.post('/api/donations/update-status', verifyToken, async (req, res) => {
 
         const placeholders = donationIds.map(() => '?').join(',');
 
-        const updateStatusSql = `UPDATE Donasi SET status = ? WHERE Donasi_ID IN (${placeholders})`;
+        const updateStatusSql = `UPDATE donasi SET status = ? WHERE Donasi_ID IN (${placeholders})`;
         
         await connection.execute(updateStatusSql, [newStatus, ...donationIds]);
 
         if (newStatus === 'Success') {
-            const sumSql = `SELECT SUM(jumlah) as totalConfirmed FROM Donasi WHERE Donasi_ID IN (${placeholders})`;
+            const sumSql = `SELECT SUM(jumlah) as totalConfirmed FROM donasi WHERE Donasi_ID IN (${placeholders})`;
             
             const [rows] = await connection.execute(sumSql, donationIds);
             const totalConfirmedAmount = rows[0].totalConfirmed || 0;
 
-            const updateTotalSql = 'UPDATE Kampanye SET donasi_saat_ini = donasi_saat_ini + ? WHERE Kampanye_ID = ?';
+            const updateTotalSql = 'UPDATE kampanye SET donasi_saat_ini = donasi_saat_ini + ? WHERE Kampanye_ID = ?';
             await connection.execute(updateTotalSql, [totalConfirmedAmount, kampanyeId]);
         }
 
@@ -634,7 +634,7 @@ app.get('/api/donations/my-history', verifyToken, async (req, res) => {
     try {
         connection = await db.getConnection();
 
-        const [donorRows] = await connection.execute('SELECT Donor_ID FROM Donor WHERE user_ID = ?', [userId]);
+        const [donorRows] = await connection.execute('SELECT Donor_ID FROM donor WHERE user_ID = ?', [userId]);
         if (donorRows.length === 0) {
             return res.json([]);
         }
@@ -649,9 +649,9 @@ app.get('/api/donations/my-history', verifyToken, async (req, res) => {
                 k.kampanye_ID AS campaignId,
                 k.judul AS campaignTitle,
                 f.nama_foundation AS foundationName
-            FROM Donasi d
-            JOIN Kampanye k ON d.kampanye_ID = k.Kampanye_ID
-            JOIN Foundation f ON k.foundation_ID = f.Foundation_ID
+            FROM donasi d
+            JOIN kampanye k ON d.kampanye_ID = k.Kampanye_ID
+            JOIN foundation f ON k.foundation_ID = f.Foundation_ID
             WHERE d.donor_ID = ?
         `;
 
@@ -773,8 +773,8 @@ app.get('/api/profile/donatur', verifyToken, async (req, res) => {
                 u.nama AS username, 
                 u.email, 
                 d.no_telp
-            FROM \`User\` u
-            JOIN Donor d ON u.User_ID = d.user_ID
+            FROM \`user\` u
+            JOIN donor d ON u.User_ID = d.user_ID
             WHERE u.User_ID = ?`;
 
         const [rows] = await connection.execute(sql, [userId]);
@@ -811,8 +811,8 @@ app.get('/api/profile/foundation', verifyToken, async (req, res) => {
                 f.no_telp,
                 f.no_pajak,
                 f.rekening
-            FROM \`User\` u
-            JOIN Foundation f ON u.User_ID = f.user_ID
+            FROM \`user\` u
+            JOIN foundation f ON u.User_ID = f.user_ID
             WHERE u.User_ID = ?`;
 
         const [rows] = await connection.execute(sql, [userId]);
@@ -867,7 +867,7 @@ app.put('/api/profile/donatur', verifyToken, async (req, res) => {
         await connection.beginTransaction();
 
         const [existingUsers] = await connection.execute(
-            'SELECT User_ID FROM `User` WHERE email = ? AND User_ID != ?',
+            'SELECT User_ID FROM `user` WHERE email = ? AND User_ID != ?',
             [email, userId]
         );
 
@@ -876,10 +876,10 @@ app.put('/api/profile/donatur', verifyToken, async (req, res) => {
             return res.status(409).json({ message: "This email address is already in use by another account." });
         }
 
-        const updateUserSql = 'UPDATE `User` SET nama = ?, email = ? WHERE User_ID = ?';
+        const updateUserSql = 'UPDATE `user` SET nama = ?, email = ? WHERE User_ID = ?';
         await connection.execute(updateUserSql, [name, email, userId]);
 
-        const updateDonorSql = 'UPDATE Donor SET no_telp = ? WHERE user_ID = ?';
+        const updateDonorSql = 'UPDATE donor SET no_telp = ? WHERE user_ID = ?';
         await connection.execute(updateDonorSql, [phone, userId]);
 
         await connection.commit();
@@ -929,9 +929,9 @@ app.put('/api/profile/foundation', verifyToken, async (req, res) => {
     try {
         connection = await db.getConnection();
 
-        const updateUserSql = 'UPDATE `User` SET nama = ?, email = ? WHERE User_ID = ?';
+        const updateUserSql = 'UPDATE `user` SET nama = ?, email = ? WHERE User_ID = ?';
         await connection.execute(updateUserSql, [username, email, userId]);
-        const updateFoundationSql = 'UPDATE Foundation SET nama_foundation = ?, no_telp = ?, no_pajak = ?, rekening = ? WHERE user_ID = ?';
+        const updateFoundationSql = 'UPDATE foundation SET nama_foundation = ?, no_telp = ?, no_pajak = ?, rekening = ? WHERE user_ID = ?';
         await connection.execute(updateFoundationSql, [nama_foundation, no_telp, no_pajak, rekeningJsonString, userId]);
 
         await connection.commit();
@@ -965,8 +965,8 @@ app.get('/api/campaigns', async (req, res) => {
                 k.jenis,
                 k.status,
                 (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID AND status = 'Success') AS donors
-            FROM Kampanye k
-            JOIN Foundation f ON k.foundation_ID = f.Foundation_ID
+            FROM kampanye k
+            JOIN foundation f ON k.foundation_ID = f.Foundation_ID
             WHERE k.status = 'Active' AND k.tgl_selesai > NOW()
             ORDER BY RAND();
         `;
@@ -999,7 +999,7 @@ app.get('/api/foundation/my-campaigns', verifyToken, async (req, res) => {
         connection = await db.getConnection();
 
         const updateExpiredSql = `
-            UPDATE Kampanye 
+            UPDATE kampanye 
             SET status = 'Inactive' 
             WHERE status = 'Active' AND tgl_selesai <= NOW();
         `;
@@ -1016,8 +1016,8 @@ app.get('/api/foundation/my-campaigns', verifyToken, async (req, res) => {
                 k.target_donasi       AS targetAmount,
                 k.status,
                 (SELECT COUNT(*) FROM Donasi WHERE kampanye_ID = k.Kampanye_ID AND status = 'Success') AS donors 
-            FROM Kampanye k
-            JOIN Foundation f ON k.foundation_ID = f.Foundation_ID
+            FROM kampanye k
+            JOIN foundation f ON k.foundation_ID = f.Foundation_ID
             WHERE f.user_ID = ?
             ORDER BY k.status, k.tgl_mulai DESC;
         `;
