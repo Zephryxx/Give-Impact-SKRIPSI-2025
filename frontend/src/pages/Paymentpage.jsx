@@ -20,6 +20,19 @@ const Paymentpage = () => {
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+
+    const bankProviders = ['BCA', 'Mandiri', 'BNI'];
+    const eMoneyProviders = ['OVO', 'DANA', 'GOPAY'];
+
+    const getPaymentType = (provider) => {
+    if (bankProviders.includes(provider)) {
+        return 'Transfer Bank';
+    }
+    if (eMoneyProviders.includes(provider)) {
+        return 'E-Money';
+    }
+    return 'Lainnya';
+    };
     
     useEffect(() => {
         if (!id) {
@@ -79,6 +92,7 @@ const Paymentpage = () => {
         setError('');
         setSuccessMessage('');
         const total = getTotalAmount();
+        const paymentType = getPaymentType(selectedProvider);
 
         if (total < 10000) {
             setError('Jumlah donasi minimal adalah Rp 10.000.');
@@ -94,7 +108,7 @@ const Paymentpage = () => {
         const donationData = {
             jumlah: total,
             pesan: prayer,
-            tipe_pemb: selectedProvider,
+            tipe_pemb: paymentType,
             provider: selectedProvider,
             kampanyeId: id
         };
@@ -122,6 +136,7 @@ const Paymentpage = () => {
         } finally {
             setIsLoading(false);
         }
+        console.log(donationData); 
     };
 
     const selectedAccount = paymentOptions.find(opt => opt.provider === selectedProvider);
