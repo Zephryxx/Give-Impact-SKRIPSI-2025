@@ -448,10 +448,6 @@ app.get('/api/kampanye/:id', async (req, res) => {
             console.error("Gagal parse JSON rekening, akan dijadikan array kosong. Error:", e);
             campaign.rekening = [];
         }
-
-        if (campaign.gambar) {
-            campaign.gambar = `${req.protocol}://${req.get('host')}/uploads/campaign_images/${campaign.gambar}`;
-        }
     
         res.status(200).json(campaign);
 
