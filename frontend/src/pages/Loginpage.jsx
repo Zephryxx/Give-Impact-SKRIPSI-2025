@@ -24,7 +24,8 @@ function Loginpage() {
     }
 
     try {
-        const response = await fetch('http://localhost:8081/api/login', {
+        const apiUrl = process.env.REACT_APP_API_URL;
+        const response = await fetch(`${apiUrl}/api/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -78,7 +79,8 @@ function Loginpage() {
         setIsLoading(true);
         setResetMessage('');
         try {
-            const response = await fetch('http://localhost:8081/api/password/check-email', {
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await fetch(`${apiUrl}/api/password/check-email`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: resetEmail }),
@@ -112,7 +114,8 @@ function Loginpage() {
         setResetMessage('Resetting password...');
 
         try {
-            const response = await fetch('http://localhost:8081/api/password/reset', {
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await fetch(`${apiUrl}/api/password/reset`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: resetEmail, newPassword: newPassword }),

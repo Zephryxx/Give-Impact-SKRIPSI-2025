@@ -15,7 +15,8 @@ function Homepagefoundation() {
     useEffect(() => {
         const fetchMyCampaigns = async () => {
             try {
-                const response = await fetch('http://localhost:8081/api/foundation/my-campaigns', {
+                const apiUrl = process.env.REACT_APP_API_URL;
+                const response = await fetch(`${apiUrl}/api/foundation/my-campaigns`, {
                     headers: {
                         'Authorization': `Bearer ${authState.token}`
                     }

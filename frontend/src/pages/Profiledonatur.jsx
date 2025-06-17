@@ -29,7 +29,8 @@ function Profiledonatur() {
         const fetchProfileData = async () => {
             if (!authState.token) { setLoading(false); return; }
             try {
-                const response = await fetch('http://localhost:8081/api/profile/donatur', {
+                const apiUrl = process.env.REACT_APP_API_URL;
+                const response = await fetch(`${apiUrl}/api/profile/donatur`, {
                     headers: { 'Authorization': `Bearer ${authState.token}` },
                 });
                 if (!response.ok) throw new Error('Failed to fetch profile.');
@@ -98,7 +99,8 @@ function Profiledonatur() {
         e.preventDefault();
         setError('');
         try {
-            const response = await fetch('http://localhost:8081/api/profile/donatur', {
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await fetch(`${apiUrl}/api/profile/donatur`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

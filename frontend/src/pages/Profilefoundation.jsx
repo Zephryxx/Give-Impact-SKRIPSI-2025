@@ -46,11 +46,12 @@ function Profilefoundation() {
         const fetchData = async () => {
             if (!authState.token) return;
             try {
+                const apiUrl = process.env.REACT_APP_API_URL;
                 const [profileResponse, campaignsResponse] = await Promise.all([
-                    fetch('http://localhost:8081/api/profile/foundation', {
+                    fetch(`${apiUrl}/api/profile/foundation`, {
                         headers: { 'Authorization': `Bearer ${authState.token}` },
                     }),
-                    fetch('http://localhost:8081/api/foundation/my-campaigns', {
+                    fetch(`${apiUrl}/api/foundation/my-campaigns`, {
                         headers: { 'Authorization': `Bearer ${authState.token}` },
                     })
                 ]);
@@ -139,8 +140,8 @@ function Profilefoundation() {
                 no_pajak: editData.no_pajak,
                 rekeningList: editData.rekening
             };
-
-            const response = await fetch('http://localhost:8081/api/profile/foundation', {
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await fetch(`${apiUrl}/api/profile/foundation`, {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${authState.token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

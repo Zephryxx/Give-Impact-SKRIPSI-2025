@@ -33,7 +33,8 @@ function Donationpage() {
   useEffect(() => {
       const fetchCampaigns = async () => {
           try {
-              const response = await fetch('http://localhost:8081/api/campaigns');
+              const apiUrl = process.env.REACT_APP_API_URL;
+              const response = await fetch(`${apiUrl}/api/campaigns`);
               if (!response.ok) {
                   throw new Error('Failed to fetch campaigns from the server.');
               }

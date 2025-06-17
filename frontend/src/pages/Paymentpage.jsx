@@ -114,7 +114,8 @@ const Paymentpage = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:8081/api/donate', {
+            const apiUrl = process.env.REACT_APP_API_URL;
+            const response = await fetch(`${apiUrl}/api/donate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
